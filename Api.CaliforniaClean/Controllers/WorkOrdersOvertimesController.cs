@@ -15,7 +15,7 @@ namespace Api.CaliforniaClean.Controllers
     public class WorkOrdersOvertimesController : ControllerBase
     {
         private readonly californiaContext _context;
-
+        private Exception? exception = null;
         public WorkOrdersOvertimesController(californiaContext context)
         {
             _context = context;

@@ -15,7 +15,7 @@ namespace Api.CaliforniaClean.Controllers
     public class ChangeOrdersController : ControllerBase
     {
         private readonly californiaContext _context;
-
+        private Exception? exception = null;
         public ChangeOrdersController(californiaContext context)
         {
             _context = context;

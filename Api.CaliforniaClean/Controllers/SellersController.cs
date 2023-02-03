@@ -15,7 +15,7 @@ namespace Api.CaliforniaClean.Controllers
     public class SellersController : ControllerBase
     {
         private readonly californiaContext _context;
-
+        private Exception? exception = null;
         public SellersController(californiaContext context)
         {
             _context = context;

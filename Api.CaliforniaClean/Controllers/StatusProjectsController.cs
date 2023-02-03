@@ -15,7 +15,7 @@ namespace Api.CaliforniaClean.Controllers
     public class StatusProjectsController : ControllerBase
     {
         private readonly californiaContext _context;
-
+        private Exception? exception = null;
         public StatusProjectsController(californiaContext context)
         {
             _context = context;

@@ -15,7 +15,7 @@ namespace Api.CaliforniaClean.Controllers
     public class TypesOrderWorksController : ControllerBase
     {
         private readonly californiaContext _context;
-
+        private Exception? exception = null;
         public TypesOrderWorksController(californiaContext context)
         {
             _context = context;

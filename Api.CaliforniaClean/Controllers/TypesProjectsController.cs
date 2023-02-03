@@ -15,7 +15,7 @@ namespace Api.CaliforniaClean.Controllers
     public class TypesProjectsController : ControllerBase
     {
         private readonly californiaContext _context;
-
+        private Exception? exception = null;
         public TypesProjectsController(californiaContext context)
         {
             _context = context;

@@ -15,7 +15,7 @@ namespace Api.CaliforniaClean.Controllers
     public class CommentsWOesController : ControllerBase
     {
         private readonly californiaContext _context;
-
+        private Exception? exception = null;
         public CommentsWOesController(californiaContext context)
         {
             _context = context;

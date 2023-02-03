@@ -1,13 +1,12 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
+﻿using Api.CaliforniaEF;
+using Newtonsoft.Json;
 using System.ComponentModel;
 
-namespace Api.CaliforniaEF;
+namespace Api.CaliforniaClean.RequestModel;
 
 [DisplayName ( "Change Order Object" )]
 [Description ( "Change Order Data" )]
-public partial class ChangeOrder
+public class ChangeOrderRequest
 {
     [JsonProperty ( "id" )]
     public int ID { get; set; }
@@ -38,13 +37,6 @@ public partial class ChangeOrder
 
     [JsonProperty ( "status" )]
     public bool Status { get; set; }
-
-    [JsonIgnore]
-    public virtual ICollection<Document> Documents { get; } = new List<Document>();
-
-    [JsonIgnore]
-    public virtual Project IDProjectNavigation { get; set; } = null!;
-
-    [JsonIgnore]
-    public virtual WorkOrder IDWorkOrderNavigation { get; set; } = null!;
+        
 }
+

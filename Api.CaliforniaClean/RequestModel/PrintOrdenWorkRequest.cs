@@ -1,13 +1,12 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
+﻿using Api.CaliforniaEF;
+using Newtonsoft.Json;
 using System.ComponentModel;
 
-namespace Api.CaliforniaEF;
+namespace Api.CaliforniaClean.RequestModel;
 
 [DisplayName ( "Print Orden Work Object" )]
 [Description ( "Print Orden Work Data" )]
-public partial class PrintOrdenWork
+public class PrintOrdenWorkRequest
 {
     [JsonProperty ( "id" )]
     public int ID { get; set; }
@@ -48,6 +47,5 @@ public partial class PrintOrdenWork
     [JsonProperty ( "change" )]
     public string? Change { get; set; }
 
-    [JsonIgnore]
-    public virtual WorkOrder IDWorkOrderNavigation { get; set; } = null!;
 }
+

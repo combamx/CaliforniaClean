@@ -1,13 +1,11 @@
 ﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 
-namespace Api.CaliforniaEF;
+namespace Api.CaliforniaClean.RequestModel;
 
 [DisplayName ( "Customer Object" )]
 [Description ( "Customer Data" )]
-public partial class Customer
+public class CustomerRequest
 {
     [JsonProperty ( "id" )]
     public int ID { get; set; }
@@ -32,10 +30,5 @@ public partial class Customer
 
     [JsonProperty ( "email" )]
     public string? Email { get; set; }
-
-    [JsonIgnore]
-    public virtual ICollection<Project> Projects { get; } = new List<Project>();
-
-    [JsonIgnore]
-    public virtual ICollection<WorkOrder> WorkOrders { get; } = new List<WorkOrder>();
 }
+

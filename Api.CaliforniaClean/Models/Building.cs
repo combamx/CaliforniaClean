@@ -23,6 +23,5 @@ public partial class Building
     public byte Order { get; set; }
 
     [JsonIgnore]
-    [JsonProperty ( "list_project" )]
     public virtual ICollection<Project> Projects { get; } = new List<Project>();
 }

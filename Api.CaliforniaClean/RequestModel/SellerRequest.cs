@@ -1,13 +1,12 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
+﻿using Api.CaliforniaEF;
+using Newtonsoft.Json;
 using System.ComponentModel;
 
-namespace Api.CaliforniaEF;
+namespace Api.CaliforniaClean.RequestModel;
 
 [DisplayName ( "Seller Object" )]
 [Description ( "Seller Data" )]
-public partial class Seller
+public class SellerRequest
 {
     [JsonProperty ( "id" )]
     public int ID { get; set; }
@@ -24,6 +23,4 @@ public partial class Seller
     [JsonProperty ( "status" )]
     public byte Status { get; set; }
 
-    [JsonIgnore]
-    public virtual ICollection<Worker> Workers { get; } = new List<Worker>();
 }

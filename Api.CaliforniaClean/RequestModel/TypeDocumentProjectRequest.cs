@@ -1,13 +1,11 @@
 ﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 
-namespace Api.CaliforniaEF;
+namespace Api.CaliforniaClean.RequestModel;
 
 [DisplayName ( "Type Document Project Object" )]
 [Description ( "Type Document Project Data" )]
-public partial class TypeDocumentProject
+public class TypeDocumentProjectRequest
 {
     [JsonProperty ( "id" )]
     public int ID { get; set; }
@@ -18,6 +16,4 @@ public partial class TypeDocumentProject
     [JsonProperty ( "id_type_project" )]
     public int IDTypeProject { get; set; }
 
-    [JsonIgnore]
-    public virtual ICollection<Document> Documents { get; } = new List<Document>();
 }

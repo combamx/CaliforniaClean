@@ -1,13 +1,12 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
+﻿using Api.CaliforniaEF;
+using Newtonsoft.Json;
 using System.ComponentModel;
 
-namespace Api.CaliforniaEF;
+namespace Api.CaliforniaClean.RequestModel;
 
 [DisplayName ( "Provider Object" )]
 [Description ( "Provider Data" )]
-public partial class Provider
+public class ProviderRequest
 {
     [JsonProperty ( "id" )]
     public int ID { get; set; }
@@ -33,12 +32,5 @@ public partial class Provider
     [JsonProperty ( "id" )]
     public byte Status { get; set; }
 
-    [JsonIgnore]
-    public virtual ICollection<Project> Projects { get; } = new List<Project>();
-
-    [JsonIgnore]
-    public virtual ICollection<WorkOrder> WorkOrders { get; } = new List<WorkOrder>();
-
-    [JsonIgnore]
-    public virtual ICollection<WorkOrdersAssigned> WorkOrdersAssigneds { get; } = new List<WorkOrdersAssigned>();
 }
+

@@ -1,13 +1,12 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
+﻿using Api.CaliforniaEF;
+using Newtonsoft.Json;
 using System.ComponentModel;
 
-namespace Api.CaliforniaEF;
+namespace Api.CaliforniaClean.RequestModel;
 
 [DisplayName ( "Status Work Order Object" )]
 [Description ( "Status Work Order Data" )]
-public partial class StatusWorkOrder
+public class StatusWorkOrderRequest
 {
     [JsonProperty ( "id" )]
     public int ID { get; set; }
@@ -27,6 +26,4 @@ public partial class StatusWorkOrder
     [JsonProperty ( "order" )]
     public byte Order { get; set; }
 
-    [JsonIgnore]
-    public virtual ICollection<WorkOrder> WorkOrders { get; } = new List<WorkOrder>();
 }

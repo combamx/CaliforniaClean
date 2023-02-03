@@ -1,13 +1,12 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
+﻿using Api.CaliforniaEF;
+using Newtonsoft.Json;
 using System.ComponentModel;
 
-namespace Api.CaliforniaEF;
+namespace Api.CaliforniaClean.RequestModel;
 
 [DisplayName ( "Status Date Object" )]
 [Description ( "Status Date Data" )]
-public partial class StatusDate
+public class StatusDateRequest
 {
     [JsonProperty ( "id" )]
     public int ID { get; set; }
@@ -21,6 +20,5 @@ public partial class StatusDate
     [JsonProperty ( "back_color" )]
     public string BackColor { get; set; } = null!;
 
-    [JsonIgnore]
-    public virtual ICollection<WorkOrder> WorkOrders { get; } = new List<WorkOrder>();
 }
+

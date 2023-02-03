@@ -1,13 +1,12 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
+﻿using Api.CaliforniaEF;
+using Newtonsoft.Json;
 using System.ComponentModel;
 
-namespace Api.CaliforniaEF;
+namespace Api.CaliforniaClean.RequestModel;
 
 [DisplayName ( "Document Object" )]
 [Description ( "Document Data" )]
-public partial class Document
+public class DocumentRequest
 {
     [JsonProperty ( "id" )]
     public int ID { get; set; }
@@ -45,15 +44,5 @@ public partial class Document
     [JsonProperty ( "status" )]
     public int Status { get; set; }
 
-    [JsonIgnore]
-    public virtual ChangeOrder IDChangeOrdenNavigation { get; set; } = null!;
-
-    [JsonIgnore]
-    public virtual Project IDProjectNavigation { get; set; } = null!;
-
-    [JsonIgnore]
-    public virtual WorkOrder IDWorkOrderNavigation { get; set; } = null!;
-
-    [JsonIgnore]
-    public virtual TypeDocumentProject TypeNavigation { get; set; } = null!;
 }
+

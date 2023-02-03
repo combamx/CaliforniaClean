@@ -4,23 +4,25 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Api.CaliforniaEF;
 
-//[DisplayName ( "Building Object" )]
-//[Description ( "Building Data" )]
+[DisplayName ( "Building Object" )]
+[Description ( "Building Data" )]
 public partial class Building
 {
-    //[JsonProperty ( "id" )]
+    [JsonProperty ( "id" )]
     public int ID { get; set; }
 
-    //[Required]
-    //[MaxLength ( 50 )]
-    //[JsonProperty ( "description" )]
+    [Required]
+    [MaxLength ( 50 )]
+    [JsonProperty ( "description" )]
     public string Description { get; set; } = null!;
 
-    //[JsonProperty ( "id_type_project" )]
+    [JsonProperty ( "id_type_project" )]
     public byte IDTypeProject { get; set; }
 
-    //[JsonProperty ( "order" )]
+    [JsonProperty ( "order" )]
     public byte Order { get; set; }
 
+    [JsonIgnore]
+    [JsonProperty ( "list_project" )]
     public virtual ICollection<Project> Projects { get; } = new List<Project>();
 }

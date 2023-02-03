@@ -52,8 +52,19 @@ public partial class californiaContext : Microsoft.EntityFrameworkCore.DbContext
 
     public virtual DbSet<Worker> Workers { get; set; }
 
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-       => optionsBuilder.UseSqlServer("Data Source=COCO;Initial Catalog=california;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False");
+    protected override void OnConfiguring ( DbContextOptionsBuilder optionsBuilder )
+    {
+        try
+        {
+            base.OnConfiguring ( optionsBuilder );
+            /*=> optionsBuilder.UseSqlServer("Data Source=COCO;Initial Catalog=california;Integrated Security=True;Connect Timeout = 30; Encrypt = False; TrustServerCertificate = False; ApplicationIntent = ReadWrite; MultiSubnetFailover = False");*/
+        }
+        catch (Exception ex)
+        {
+            throw new Exception(ex.Message, ex);
+        }
+        
+    }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

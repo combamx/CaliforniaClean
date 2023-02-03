@@ -1,7 +1,12 @@
 using Api.DbContext.CaliforniaEF;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using Newtonsoft.Json.Serialization;
+using System.Text.Json;
 
 var builder = WebApplication.CreateBuilder ( args );
 var ConnectionString = builder.Configuration.GetConnectionString ( "california_db" );
@@ -14,10 +19,13 @@ builder.Services.AddEndpointsApiExplorer ( );
 builder.Services.AddSwaggerGen ( );
 builder.Services.AddDbContext<californiaContext> ( options => options.UseSqlServer ( ConnectionString ) );
 builder.Services.AddControllers ( )
-        .AddNewtonsoftJson ( jsonOptions =>
+        .AddNewtonsoftJson ( options =>
         {
-            jsonOptions.SerializerSettings.Converters.Add ( new StringEnumConverter ( ) );
+            options.SerializerSettings.Converters.Add ( new StringEnumConverter ( new CamelCaseNamingStrategy ( true, true ) ));
+            options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
         } );
+builder.Services.AddControllersWithViews ( ).AddNewtonsoftJson ( );
+
 
 var app = builder.Build ( );
 

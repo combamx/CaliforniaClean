@@ -48,7 +48,7 @@ namespace Api.CaliforniaClean.Controllers
 
         // GET: api/Buildings/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Building>> GetBuilding(int id)
+        public async Task<ActionResult<BuildingRequest>> GetBuilding(int id)
         {
             try
             {
@@ -59,7 +59,12 @@ namespace Api.CaliforniaClean.Controllers
                     return NotFound ( );
                 }
 
-                return building;
+                var config = new MapperConfiguration ( cfg => cfg.CreateMap<Building , BuildingRequest> ( ) );
+
+                var mapper = new Mapper ( config );
+                BuildingRequest dto = mapper.Map<BuildingRequest> ( building );
+
+                return dto;
             }
             catch ( Exception ex )
             {
@@ -75,57 +80,86 @@ namespace Api.CaliforniaClean.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutBuilding(int id, Building building)
         {
-            if (id != building.ID)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(building).State = EntityState.Modified;
-
             try
             {
-                await _context.SaveChangesAsync();
+                if ( id != building.ID )
+                {
+                    return BadRequest ( );
+                }
+
+                _context.Entry ( building ).State = EntityState.Modified;
+
+                try
+                {
+                    await _context.SaveChangesAsync ( );
+                }
+                catch ( DbUpdateConcurrencyException )
+                {
+                    if ( !BuildingExists ( id ) )
+                    {
+                        return NotFound ( );
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+
+                return NoContent ( );
             }
-            catch (DbUpdateConcurrencyException)
+            catch(Exception ex )
             {
-                if (!BuildingExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                exception = ex;
             }
 
-            return NoContent();
+            return BadRequest ( exception.Message );
+
         }
 
         // POST: api/Buildings
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Building>> PostBuilding(Building building)
+        public async Task<ActionResult<BuildingRequest>> PostBuilding(Building building)
         {
-            _context.Buildings.Add(building);
-            await _context.SaveChangesAsync();
+            try
+            {
+                _context.Buildings.Add ( building );
+                await _context.SaveChangesAsync ( );
 
-            return CreatedAtAction("GetBuilding", new { id = building.ID }, building);
+                return CreatedAtAction ( "GetBuilding" , new { id = building.ID } , building );
+            }
+            catch(Exception ex )
+            {
+                exception = ex;
+            }
+
+            return BadRequest ( exception.Message );
         }
 
         // DELETE: api/Buildings/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteBuilding(int id)
         {
-            var building = await _context.Buildings.FindAsync(id);
-            if (building == null)
+            try
             {
-                return NotFound();
+                var building = await _context.Buildings.FindAsync ( id );
+                if ( building == null )
+                {
+                    return NotFound ( );
+                }
+
+                _context.Buildings.Remove ( building );
+                await _context.SaveChangesAsync ( );
+
+                return NoContent ( );
+            }
+            catch ( Exception ex )
+            {
+                exception = ex;
             }
 
-            _context.Buildings.Remove(building);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
+            return BadRequest ( exception.Message );
+            
         }
 
         private bool BuildingExists(int id)

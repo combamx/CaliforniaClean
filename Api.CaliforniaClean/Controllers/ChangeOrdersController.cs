@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Api.CaliforniaEF;
 using Api.DbContext.CaliforniaEF;
+using Api.CaliforniaClean.RequestModel;
+using AutoMapper;
 
 namespace Api.CaliforniaClean.Controllers
 {
@@ -16,6 +18,7 @@ namespace Api.CaliforniaClean.Controllers
     {
         private readonly californiaContext _context;
         private Exception? exception = null;
+
         public ChangeOrdersController(californiaContext context)
         {
             _context = context;
@@ -23,23 +26,54 @@ namespace Api.CaliforniaClean.Controllers
 
         // GET: api/ChangeOrders
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ChangeOrder>>> GetChangeOrders()
+        public async Task<ActionResult<IEnumerable<ChangeOrderRequest>>> GetChangeOrders()
         {
-            return await _context.ChangeOrders.ToListAsync();
+            try
+            {
+                var buildings = await _context.ChangeOrders.ToListAsync ( );
+                var config = new MapperConfiguration ( cfg => cfg.CreateMap<ChangeOrder , ChangeOrderRequest> ( ) );
+
+                var mapper = new Mapper ( config );
+                List<ChangeOrderRequest> dto = mapper.Map<List<ChangeOrderRequest>> ( buildings );
+
+                return dto;
+
+            }
+            catch ( Exception ex )
+            {
+                exception = ex;
+            }
+
+            return BadRequest ( exception.Message );
+            
         }
 
         // GET: api/ChangeOrders/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<ChangeOrder>> GetChangeOrder(int id)
+        public async Task<ActionResult<ChangeOrderRequest>> GetChangeOrder(int id)
         {
-            var changeOrder = await _context.ChangeOrders.FindAsync(id);
-
-            if (changeOrder == null)
+            try
             {
-                return NotFound();
+                var changeOrder = await _context.ChangeOrders.FindAsync ( id );
+
+                if ( changeOrder == null )
+                {
+                    return NotFound ( );
+                }
+
+                var config = new MapperConfiguration ( cfg => cfg.CreateMap<ChangeOrder , ChangeOrderRequest> ( ) );
+
+                var mapper = new Mapper ( config );
+                ChangeOrderRequest dto = mapper.Map<ChangeOrderRequest> ( changeOrder );
+
+                return dto;
+            }
+            catch ( Exception ex )
+            {
+                exception = ex;
             }
 
-            return changeOrder;
+            return BadRequest ( exception.Message );
         }
 
         // PUT: api/ChangeOrders/5
@@ -47,57 +81,87 @@ namespace Api.CaliforniaClean.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutChangeOrder(int id, ChangeOrder changeOrder)
         {
-            if (id != changeOrder.ID)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(changeOrder).State = EntityState.Modified;
-
             try
             {
-                await _context.SaveChangesAsync();
+                if ( id != changeOrder.ID )
+                {
+                    return BadRequest ( );
+                }
+
+                _context.Entry ( changeOrder ).State = EntityState.Modified;
+
+                try
+                {
+                    await _context.SaveChangesAsync ( );
+                }
+                catch ( DbUpdateConcurrencyException )
+                {
+                    if ( !ChangeOrderExists ( id ) )
+                    {
+                        return NotFound ( );
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+
+                return NoContent ( );
             }
-            catch (DbUpdateConcurrencyException)
+            catch ( Exception ex )
             {
-                if (!ChangeOrderExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                exception = ex;
             }
 
-            return NoContent();
+            return BadRequest ( exception.Message );
+            
         }
 
         // POST: api/ChangeOrders
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<ChangeOrder>> PostChangeOrder(ChangeOrder changeOrder)
+        public async Task<ActionResult<ChangeOrderRequest>> PostChangeOrder(ChangeOrder changeOrder)
         {
-            _context.ChangeOrders.Add(changeOrder);
-            await _context.SaveChangesAsync();
+            try
+            {
+                _context.ChangeOrders.Add ( changeOrder );
+                await _context.SaveChangesAsync ( );
 
-            return CreatedAtAction("GetChangeOrder", new { id = changeOrder.ID }, changeOrder);
+                return CreatedAtAction ( "GetChangeOrder" , new { id = changeOrder.ID } , changeOrder );
+            }
+            catch ( Exception ex )
+            {
+                exception = ex;
+            }
+
+            return BadRequest ( exception.Message );
+            
         }
 
         // DELETE: api/ChangeOrders/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteChangeOrder(int id)
         {
-            var changeOrder = await _context.ChangeOrders.FindAsync(id);
-            if (changeOrder == null)
+            try
             {
-                return NotFound();
+                var changeOrder = await _context.ChangeOrders.FindAsync ( id );
+                if ( changeOrder == null )
+                {
+                    return NotFound ( );
+                }
+
+                _context.ChangeOrders.Remove ( changeOrder );
+                await _context.SaveChangesAsync ( );
+
+                return NoContent ( );
+            }
+            catch ( Exception ex )
+            {
+                exception = ex;
             }
 
-            _context.ChangeOrders.Remove(changeOrder);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
+            return BadRequest ( exception.Message );
+            
         }
 
         private bool ChangeOrderExists(int id)

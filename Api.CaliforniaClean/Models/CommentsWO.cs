@@ -1,23 +1,11 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-
-namespace Api.CaliforniaEF;
-
-[DisplayName ( "Comments Work Order Object" )]
-[Description ( "Comments Work Order Data" )]
+﻿namespace Api.CaliforniaEF;
 public partial class CommentsWO
 {
-    [JsonProperty ( "id" )]
     public int ID { get; set; }
 
-    [JsonProperty ( "description" )]
     public string Description { get; set; } = null!;
 
-    [JsonProperty ( "id_work_order" )]
     public int IDWorkOrder { get; set; }
 
-    [JsonIgnore]
     public virtual WorkOrder IDNavigation { get; set; } = null!;
 }

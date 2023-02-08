@@ -1,20 +1,10 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
+﻿namespace Api.CaliforniaEF;
 
-namespace Api.CaliforniaEF;
-
-[DisplayName ( "Types Order Work Object" )]
-[Description ( "Types Order Work Data" )]
 public partial class TypesOrderWork
 {
-    [JsonProperty ( "id" )]
     public int ID { get; set; }
 
-    [JsonProperty ( "description" )]
     public string Description { get; set; } = null!;
 
-    [JsonIgnore]
     public virtual ICollection<WorkOrder> WorkOrders { get; } = new List<WorkOrder>();
 }

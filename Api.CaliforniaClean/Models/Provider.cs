@@ -1,44 +1,26 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
+﻿namespace Api.CaliforniaEF;
 
-namespace Api.CaliforniaEF;
-
-[DisplayName ( "Provider Object" )]
-[Description ( "Provider Data" )]
 public partial class Provider
 {
-    [JsonProperty ( "id" )]
     public int ID { get; set; }
 
-    [JsonProperty ( "id" )]
     public string Name { get; set; } = null!;
 
-    [JsonProperty ( "id" )]
     public string? Email { get; set; }
 
-    [JsonProperty ( "id" )]
     public string? Address { get; set; }
 
-    [JsonProperty ( "id" )]
     public string? City { get; set; }
 
-    [JsonProperty ( "id" )]
     public int? Zip { get; set; }
 
-    [JsonProperty ( "id" )]
     public string? Phone { get; set; }
 
-    [JsonProperty ( "id" )]
     public byte Status { get; set; }
 
-    [JsonIgnore]
     public virtual ICollection<Project> Projects { get; } = new List<Project>();
 
-    [JsonIgnore]
     public virtual ICollection<WorkOrder> WorkOrders { get; } = new List<WorkOrder>();
 
-    [JsonIgnore]
     public virtual ICollection<WorkOrdersAssigned> WorkOrdersAssigneds { get; } = new List<WorkOrdersAssigned>();
 }

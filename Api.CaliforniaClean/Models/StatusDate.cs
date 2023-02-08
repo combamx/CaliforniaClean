@@ -1,26 +1,14 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
+﻿namespace Api.CaliforniaEF;
 
-namespace Api.CaliforniaEF;
-
-[DisplayName ( "Status Date Object" )]
-[Description ( "Status Date Data" )]
 public partial class StatusDate
 {
-    [JsonProperty ( "id" )]
     public int ID { get; set; }
 
-    [JsonProperty ( "description" )]
     public string Description { get; set; } = null!;
 
-    [JsonProperty ( "text_color" )]
     public string TextColor { get; set; } = null!;
 
-    [JsonProperty ( "back_color" )]
     public string BackColor { get; set; } = null!;
 
-    [JsonIgnore]
     public virtual ICollection<WorkOrder> WorkOrders { get; } = new List<WorkOrder>();
 }

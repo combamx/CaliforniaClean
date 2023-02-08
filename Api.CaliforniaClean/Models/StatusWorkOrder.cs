@@ -1,32 +1,18 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
+﻿namespace Api.CaliforniaEF;
 
-namespace Api.CaliforniaEF;
-
-[DisplayName ( "Status Work Order Object" )]
-[Description ( "Status Work Order Data" )]
 public partial class StatusWorkOrder
 {
-    [JsonProperty ( "id" )]
     public int ID { get; set; }
 
-    [JsonProperty ( "description" )]
     public string Description { get; set; } = null!;
 
-    [JsonProperty ( "text_color" )]
     public string TextColor { get; set; } = null!;
 
-    [JsonProperty ( "back_color" )]
     public string BackColor { get; set; } = null!;
 
-    [JsonProperty ( "filter" )]
     public string Filter { get; set; } = null!;
 
-    [JsonProperty ( "order" )]
     public byte Order { get; set; }
 
-    [JsonIgnore]
     public virtual ICollection<WorkOrder> WorkOrders { get; } = new List<WorkOrder>();
 }

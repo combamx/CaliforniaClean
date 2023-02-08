@@ -1,50 +1,29 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-
-namespace Api.CaliforniaEF;
-
-[DisplayName ( "Change Order Object" )]
-[Description ( "Change Order Data" )]
+﻿namespace Api.CaliforniaEF;
 public partial class ChangeOrder
 {
-    [JsonProperty ( "id" )]
     public int ID { get; set; }
 
-    [JsonProperty ( "clave" )]
     public int Clave { get; set; }
 
-    [JsonProperty ( "date_change" )]
     public DateTime DateChange { get; set; }
 
-    [JsonProperty ( "amount" )]
     public decimal Amount { get; set; }
 
-    [JsonProperty ( "id_status_co" )]
     public int IDStatusCO { get; set; }
 
-    [JsonProperty ( "id_work_order" )]
     public int IDWorkOrder { get; set; }
 
-    [JsonProperty ( "id_project" )]
     public int IDProject { get; set; }
 
-    [JsonProperty ( "description" )]
     public string? Description { get; set; }
 
-    [JsonProperty ( "user" )]
     public string User { get; set; } = null!;
 
-    [JsonProperty ( "status" )]
     public bool Status { get; set; }
 
-    [JsonIgnore]
     public virtual ICollection<Document> Documents { get; } = new List<Document>();
 
-    [JsonIgnore]
     public virtual Project IDProjectNavigation { get; set; } = null!;
 
-    [JsonIgnore]
     public virtual WorkOrder IDWorkOrderNavigation { get; set; } = null!;
 }

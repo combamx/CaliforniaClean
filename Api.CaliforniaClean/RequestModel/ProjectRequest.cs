@@ -1,7 +1,4 @@
-﻿using Api.CaliforniaEF;
-using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
+﻿using Newtonsoft.Json;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
@@ -14,37 +11,36 @@ public partial class ProjectRequest
     [JsonProperty ( "id" )]
     public int ID { get; set; }
 
-    [MaxLength ( 100 )]
     [JsonProperty ( "project_name" )]
     public string ProjectName { get; set; } = null!;
 
-    [MaxLength ( 50 )]
     [JsonProperty ( "address" )]
     public string Address { get; set; } = null!;
 
-    [MaxLength ( 50 )]
     [JsonProperty ( "city" )]
     public string? City { get; set; }
 
-    [MaxLength ( 100 )]
     [JsonProperty ( "description" )]
     public string? Description { get; set; }
 
     [JsonProperty ( "date_project" )]
     public DateTime? DateProject { get; set; }
 
+    [DisplayFormat ( ApplyFormatInEditMode = true , DataFormatString = "{0:c}" )]
     [JsonProperty ( "amount" )]
     public decimal? Amount { get; set; }
 
     [JsonProperty ( "retentions_project" )]
-    public byte? RetentionsProject { get; set; }
+    public float? RetentionsProject { get; set; }
 
+    [DisplayFormat ( ApplyFormatInEditMode = true , DataFormatString = "{0:c}" )]
     [JsonProperty ( "retentions" )]
-    public byte? Retentions { get; set; }
+    public decimal? Retentions { get; set; }
 
-    [JsonProperty ( "seller" )]
-    public byte? SellerProject { get; set; }
+    [JsonProperty ( "percent_seller" )]
+    public float? SellerProject { get; set; }
 
+    [DisplayFormat ( ApplyFormatInEditMode = true , DataFormatString = "{0:c}" )]
     [JsonProperty ( "amount_seller" )]
     public decimal? Selle { get; set; }
 
@@ -63,6 +59,7 @@ public partial class ProjectRequest
     [JsonProperty ( "id_type_building" )]
     public int? IDTypeBuilding { get; set; }
 
+    [DisplayFormat ( ApplyFormatInEditMode = true , DataFormatString = "{0:c}" )]
     [JsonProperty ( "amount_provide" )]
     public decimal? AmountProvide { get; set; }
 

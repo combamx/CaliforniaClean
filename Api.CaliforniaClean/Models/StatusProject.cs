@@ -1,20 +1,10 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
+﻿namespace Api.CaliforniaEF;
 
-namespace Api.CaliforniaEF;
-
-[DisplayName ( "Status Project Object" )]
-[Description ( "Status Project Data" )]
 public partial class StatusProject
 {
-    [JsonProperty ( "id" )]
     public int ID { get; set; }
 
-    [JsonProperty ( "description" )]
     public string Description { get; set; } = null!;
 
-    [JsonIgnore]
     public virtual ICollection<Project> Projects { get; } = new List<Project>();
 }

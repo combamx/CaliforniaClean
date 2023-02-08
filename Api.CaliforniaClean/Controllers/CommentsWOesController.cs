@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Api.CaliforniaEF;
 using Api.DbContext.CaliforniaEF;
+using Api.CaliforniaClean.RequestModel;
+using AutoMapper;
 
 namespace Api.CaliforniaClean.Controllers
 {
@@ -16,6 +18,7 @@ namespace Api.CaliforniaClean.Controllers
     {
         private readonly californiaContext _context;
         private Exception? exception = null;
+
         public CommentsWOesController(californiaContext context)
         {
             _context = context;
@@ -23,23 +26,55 @@ namespace Api.CaliforniaClean.Controllers
 
         // GET: api/CommentsWOes
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<CommentsWO>>> GetCommentsWOs()
+        public async Task<ActionResult<IEnumerable<CommentsWORequest>>> GetCommentsWOs()
         {
-            return await _context.CommentsWOs.ToListAsync();
+            try
+            {
+                var buildings = await _context.CommentsWOs.ToListAsync ( );
+                var config = new MapperConfiguration ( cfg => cfg.CreateMap<CommentsWO , CommentsWORequest> ( ) );
+
+                var mapper = new Mapper ( config );
+                List<CommentsWORequest> dto = mapper.Map<List<CommentsWORequest>> ( buildings );
+
+                return dto;
+            }
+            catch(Exception ex)
+            {
+                exception = ex;
+            }
+
+            return BadRequest ( exception.Message );
+
         }
 
         // GET: api/CommentsWOes/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<CommentsWO>> GetCommentsWO(int id)
+        public async Task<ActionResult<CommentsWORequest>> GetCommentsWO(int id)
         {
-            var commentsWO = await _context.CommentsWOs.FindAsync(id);
-
-            if (commentsWO == null)
+            try
             {
-                return NotFound();
+                var commentsWO = await _context.CommentsWOs.FindAsync ( id );
+
+                if ( commentsWO == null )
+                {
+                    return NotFound ( );
+                }
+
+                var config = new MapperConfiguration ( cfg => cfg.CreateMap<CommentsWO , CommentsWORequest> ( ) );
+
+                var mapper = new Mapper ( config );
+                CommentsWORequest dto = mapper.Map<CommentsWORequest> ( commentsWO );
+
+                return dto;
+
+            }
+            catch ( Exception ex )
+            {
+                exception = ex;
             }
 
-            return commentsWO;
+            return BadRequest ( exception.Message );
+
         }
 
         // PUT: api/CommentsWOes/5
@@ -47,57 +82,88 @@ namespace Api.CaliforniaClean.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutCommentsWO(int id, CommentsWO commentsWO)
         {
-            if (id != commentsWO.ID)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(commentsWO).State = EntityState.Modified;
-
             try
             {
-                await _context.SaveChangesAsync();
+                if ( id != commentsWO.ID )
+                {
+                    return BadRequest ( );
+                }
+
+                _context.Entry ( commentsWO ).State = EntityState.Modified;
+
+                try
+                {
+                    await _context.SaveChangesAsync ( );
+                }
+                catch ( DbUpdateConcurrencyException )
+                {
+                    if ( !CommentsWOExists ( id ) )
+                    {
+                        return NotFound ( );
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+
+                return NoContent ( );
             }
-            catch (DbUpdateConcurrencyException)
+            catch ( Exception ex )
             {
-                if (!CommentsWOExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                exception = ex;
             }
 
-            return NoContent();
+            return BadRequest ( exception.Message );
+
+            
         }
 
         // POST: api/CommentsWOes
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<CommentsWO>> PostCommentsWO(CommentsWO commentsWO)
+        public async Task<ActionResult<CommentsWORequest>> PostCommentsWO(CommentsWO commentsWO)
         {
-            _context.CommentsWOs.Add(commentsWO);
-            await _context.SaveChangesAsync();
+            try
+            {
+                _context.CommentsWOs.Add ( commentsWO );
+                await _context.SaveChangesAsync ( );
 
-            return CreatedAtAction("GetCommentsWO", new { id = commentsWO.ID }, commentsWO);
+                return CreatedAtAction ( "GetCommentsWO" , new { id = commentsWO.ID } , commentsWO );
+            }
+            catch ( Exception ex )
+            {
+                exception = ex;
+            }
+
+            return BadRequest ( exception.Message );
+            
         }
 
         // DELETE: api/CommentsWOes/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteCommentsWO(int id)
         {
-            var commentsWO = await _context.CommentsWOs.FindAsync(id);
-            if (commentsWO == null)
+            try
             {
-                return NotFound();
+                var commentsWO = await _context.CommentsWOs.FindAsync ( id );
+                if ( commentsWO == null )
+                {
+                    return NotFound ( );
+                }
+
+                _context.CommentsWOs.Remove ( commentsWO );
+                await _context.SaveChangesAsync ( );
+
+                return NoContent ( );
+            }
+            catch ( Exception ex )
+            {
+                exception = ex;
             }
 
-            _context.CommentsWOs.Remove(commentsWO);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
+            return BadRequest ( exception.Message );
+            
         }
 
         private bool CommentsWOExists(int id)

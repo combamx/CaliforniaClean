@@ -1,14 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Api.CaliforniaEF;
 using Api.DbContext.CaliforniaEF;
 using Api.CaliforniaClean.RequestModel;
 using AutoMapper;
+using Api.CaliforniaClean.RequestModel.Views;
+using System.Data.SqlClient;
+using Dapper;
+using System.Linq;
+using NuGet.Protocol;
 
 namespace Api.CaliforniaClean.Controllers
 {
@@ -18,14 +18,16 @@ namespace Api.CaliforniaClean.Controllers
     {
         private readonly californiaContext _context;
         private Exception? exception = null;
+        private string? ConnectionString = "";
 
         public ProjectsController(californiaContext context)
         {
             _context = context;
+            ConnectionString = _context.Database.GetConnectionString ( );
         }
 
         // GET: api/Projects
-        [HttpGet]
+        [HttpGet ( "GetProjects" )]
         public async Task<ActionResult<IEnumerable<ProjectRequest>>> GetProjects()
         {
             try
@@ -48,16 +50,32 @@ namespace Api.CaliforniaClean.Controllers
 
         // GET: api/Projects/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Project>> GetProject(int id)
+        public async Task<ActionResult<ProjectRequest>> GetProject(int id)
         {
-            var project = await _context.Projects.FindAsync(id);
-
-            if (project == null)
+            try
             {
-                return NotFound();
+                var project = await _context.Projects.FindAsync ( id );
+
+                if ( project == null )
+                {
+                    return NotFound ( );
+                }
+
+                var projects = await _context.Projects.ToListAsync ( );
+                var config = new MapperConfiguration ( cfg => cfg.CreateMap<Project , ProjectRequest> ( ) );
+
+                var mapper = new Mapper ( config );
+                ProjectRequest dto = mapper.Map<ProjectRequest> ( projects );
+
+                return dto;
+            }
+            catch ( Exception ex )
+            {
+                exception = ex;
             }
 
-            return project;
+            return BadRequest ( exception.Message );
+            
         }
 
         // PUT: api/Projects/5
@@ -65,71 +83,121 @@ namespace Api.CaliforniaClean.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutProject(int id, Project project)
         {
-            if (id != project.ID)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(project).State = EntityState.Modified;
-
             try
             {
-                await _context.SaveChangesAsync();
+                if ( id != project.ID )
+                {
+                    return BadRequest ( );
+                }
+
+                _context.Entry ( project ).State = EntityState.Modified;
+
+                try
+                {
+                    await _context.SaveChangesAsync ( );
+                }
+                catch ( DbUpdateConcurrencyException )
+                {
+                    if ( !ProjectExists ( id ) )
+                    {
+                        return NotFound ( );
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+
+                return NoContent ( );
             }
-            catch (DbUpdateConcurrencyException)
+            catch ( Exception ex )
             {
-                if (!ProjectExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                exception = ex;
             }
 
-            return NoContent();
+            return BadRequest ( exception.Message );
+            
         }
 
         // POST: api/Projects
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Project>> PostProject(Project project)
+        public async Task<ActionResult<ProjectRequest>> PostProject(Project project)
         {
-            _context.Projects.Add(project);
             try
             {
-                await _context.SaveChangesAsync();
+                _context.Projects.Add ( project );
+                try
+                {
+                    await _context.SaveChangesAsync ( );
+                }
+                catch ( DbUpdateException )
+                {
+                    if ( ProjectExists ( project.ID ) )
+                    {
+                        return Conflict ( );
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+
+                return CreatedAtAction ( "GetProject" , new { id = project.ID } , project );
             }
-            catch (DbUpdateException)
+            catch ( Exception ex )
             {
-                if (ProjectExists(project.ID))
-                {
-                    return Conflict();
-                }
-                else
-                {
-                    throw;
-                }
+                exception = ex;
             }
 
-            return CreatedAtAction("GetProject", new { id = project.ID }, project);
+            return BadRequest ( exception.Message );
+            
         }
 
         // DELETE: api/Projects/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteProject(int id)
         {
-            var project = await _context.Projects.FindAsync(id);
-            if (project == null)
+            try
             {
-                return NotFound();
+                var project = await _context.Projects.FindAsync ( id );
+                if ( project == null )
+                {
+                    return NotFound ( );
+                }
+
+                _context.Projects.Remove ( project );
+                await _context.SaveChangesAsync ( );
+
+                return NoContent ( );
+            }
+            catch ( Exception ex )
+            {
+                exception = ex;
             }
 
-            _context.Projects.Remove(project);
-            await _context.SaveChangesAsync();
+            return BadRequest ( exception.Message );
+            
+        }
 
-            return NoContent();
+        [HttpGet ( "GetProjectsList" )]
+        public async Task<ActionResult<IEnumerable<ProjectView>>> GetProjectsList ( )
+        {
+            try
+            {
+                using ( var con = new SqlConnection ( ConnectionString ) )
+                {
+                    var version = await con.QueryAsync( "SELECT * FROM vListProjects ORDER BY DateProject DESC;" );
+                    return Ok( version.ToList ( ) );
+                }
+            }
+            catch(Exception ex )
+            {
+                exception = ex;
+            }
+
+            return BadRequest ( exception.Message );
+
         }
 
         private bool ProjectExists(int id)

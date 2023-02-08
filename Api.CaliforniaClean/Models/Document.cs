@@ -1,4 +1,7 @@
-﻿namespace Api.CaliforniaEF;
+﻿using System;
+using System.Collections.Generic;
+
+namespace Api.CaliforniaEF;
 
 public partial class Document
 {
@@ -21,7 +24,7 @@ public partial class Document
     public int IDChangeOrden { get; set; }
 
     public string Expiration { get; set; } = null!;
-    
+
     public int Type { get; set; }
 
     public int Status { get; set; }

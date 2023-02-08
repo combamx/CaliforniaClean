@@ -1,4 +1,7 @@
-﻿namespace Api.CaliforniaEF;
+﻿using System;
+using System.Collections.Generic;
+
+namespace Api.CaliforniaEF;
 
 public partial class TypesOrderWork
 {

@@ -1,4 +1,8 @@
-﻿namespace Api.CaliforniaEF;
+﻿using System;
+using System.Collections.Generic;
+
+namespace Api.CaliforniaEF;
+
 public partial class Customer
 {
     public int ID { get; set; }

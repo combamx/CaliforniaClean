@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace Api.CaliforniaEF;
+﻿namespace Api.CaliforniaEF;
 
 public partial class Project
 {
@@ -18,11 +16,11 @@ public partial class Project
 
     public decimal? Amount { get; set; }
 
-    public float? RetentionsProject { get; set; }
+    public double? RetentionsProject { get; set; }
 
     public decimal? Retentions { get; set; }
 
-    public float? SellerProject { get; set; }
+    public double? SellerProject { get; set; }
 
     public decimal? Selle { get; set; }
 

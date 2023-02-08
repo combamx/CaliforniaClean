@@ -1,4 +1,6 @@
-﻿using Api.CaliforniaEF;
+﻿using System;
+using System.Collections.Generic;
+using Api.CaliforniaEF;
 using Microsoft.EntityFrameworkCore;
 
 namespace Api.DbContext.CaliforniaEF;
@@ -52,18 +54,19 @@ public partial class californiaContext : Microsoft.EntityFrameworkCore.DbContext
 
     public virtual DbSet<Worker> Workers { get; set; }
 
-    protected override void OnConfiguring ( DbContextOptionsBuilder optionsBuilder )
+    public virtual DbSet<vListProject> vListProjects { get; set; }
+
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder )
     {
         try
         {
             base.OnConfiguring ( optionsBuilder );
             /*=> optionsBuilder.UseSqlServer("Data Source=COCO;Initial Catalog=california;Integrated Security=True;Connect Timeout = 30; Encrypt = False; TrustServerCertificate = False; ApplicationIntent = ReadWrite; MultiSubnetFailover = False");*/
         }
-        catch (Exception ex)
+        catch ( Exception ex )
         {
-            throw new Exception(ex.Message, ex);
+            throw new Exception ( ex.Message , ex );
         }
-        
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -174,9 +177,10 @@ public partial class californiaContext : Microsoft.EntityFrameworkCore.DbContext
             entity.Property(e => e.AmountProvide).HasColumnType("money");
             entity.Property(e => e.City).HasMaxLength(50);
             entity.Property(e => e.DateProject).HasColumnType("date");
-            entity.Property(e => e.Description).HasMaxLength(1);
+            entity.Property(e => e.Description).HasMaxLength(100);
             entity.Property(e => e.OCIP).HasMaxLength(50);
             entity.Property(e => e.ProjectName).HasMaxLength(100);
+            entity.Property(e => e.Retentions).HasColumnType("money");
             entity.Property(e => e.Selle).HasColumnType("money");
 
             entity.HasOne(d => d.IDCustomerNavigation).WithMany(p => p.Projects)
@@ -353,6 +357,29 @@ public partial class californiaContext : Microsoft.EntityFrameworkCore.DbContext
                 .HasForeignKey(d => d.Status)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Workers_Sellers");
+        });
+
+        modelBuilder.Entity<vListProject>(entity =>
+        {
+            entity
+                .HasNoKey()
+                .ToView("vListProjects");
+
+            entity.Property(e => e.Address).HasMaxLength(50);
+            entity.Property(e => e.Amount).HasMaxLength(4000);
+            entity.Property(e => e.AmountProvide).HasMaxLength(4000);
+            entity.Property(e => e.City).HasMaxLength(50);
+            entity.Property(e => e.CompanyName).HasMaxLength(100);
+            entity.Property(e => e.DateProject).HasColumnType("date");
+            entity.Property(e => e.Description).HasMaxLength(100);
+            entity.Property(e => e.NameSelle).HasMaxLength(50);
+            entity.Property(e => e.OCIP).HasMaxLength(50);
+            entity.Property(e => e.ProjectName).HasMaxLength(100);
+            entity.Property(e => e.Retentions).HasMaxLength(4000);
+            entity.Property(e => e.Selle).HasMaxLength(4000);
+            entity.Property(e => e.Status).HasMaxLength(50);
+            entity.Property(e => e.TypeBuildingDescription).HasMaxLength(50);
+            entity.Property(e => e.TypeProjectDescription).HasMaxLength(50);
         });
 
         OnModelCreatingPartial(modelBuilder);

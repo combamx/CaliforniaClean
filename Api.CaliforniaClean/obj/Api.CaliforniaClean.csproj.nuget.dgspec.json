@@ -1,23 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "D:\\Users\\omarc\\source\\repos\\CaliforniaClean\\CaliforniaClean\\Api.CaliforniaClean\\Api.CaliforniaClean.csproj": {}
+    "D:\\Source\\CaliforniaClean\\Api.CaliforniaClean\\Api.CaliforniaClean.csproj": {}
   },
   "projects": {
-    "D:\\Users\\omarc\\source\\repos\\CaliforniaClean\\CaliforniaClean\\Api.CaliforniaClean\\Api.CaliforniaClean.csproj": {
+    "D:\\Source\\CaliforniaClean\\Api.CaliforniaClean\\Api.CaliforniaClean.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\Users\\omarc\\source\\repos\\CaliforniaClean\\CaliforniaClean\\Api.CaliforniaClean\\Api.CaliforniaClean.csproj",
+        "projectUniqueName": "D:\\Source\\CaliforniaClean\\Api.CaliforniaClean\\Api.CaliforniaClean.csproj",
         "projectName": "Api.CaliforniaClean",
-        "projectPath": "D:\\Users\\omarc\\source\\repos\\CaliforniaClean\\CaliforniaClean\\Api.CaliforniaClean\\Api.CaliforniaClean.csproj",
-        "packagesPath": "C:\\Users\\omarc\\.nuget\\packages\\",
-        "outputPath": "D:\\Users\\omarc\\source\\repos\\CaliforniaClean\\CaliforniaClean\\Api.CaliforniaClean\\obj\\",
+        "projectPath": "D:\\Source\\CaliforniaClean\\Api.CaliforniaClean\\Api.CaliforniaClean.csproj",
+        "packagesPath": "C:\\Users\\omar\\.nuget\\packages\\",
+        "outputPath": "D:\\Source\\CaliforniaClean\\Api.CaliforniaClean\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
-          "D:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\omarc\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\omar\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -125,7 +125,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.402\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.202\\RuntimeIdentifierGraph.json"
         }
       }
     }

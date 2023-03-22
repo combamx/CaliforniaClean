@@ -304,7 +304,9 @@ D:\Source\CaliforniaClean\Api.CaliforniaClean\bin\Debug\net6.0\Api.CaliforniaCle
 D:\Source\CaliforniaClean\Api.CaliforniaClean\bin\Debug\net6.0\Api.CaliforniaClean.pdb
 D:\Source\CaliforniaClean\Api.CaliforniaClean\bin\Debug\net6.0\AutoMapper.dll
 D:\Source\CaliforniaClean\Api.CaliforniaClean\bin\Debug\net6.0\Azure.Core.dll
+D:\Source\CaliforniaClean\Api.CaliforniaClean\bin\Debug\net6.0\Azure.Extensions.AspNetCore.Configuration.Secrets.dll
 D:\Source\CaliforniaClean\Api.CaliforniaClean\bin\Debug\net6.0\Azure.Identity.dll
+D:\Source\CaliforniaClean\Api.CaliforniaClean\bin\Debug\net6.0\Azure.Security.KeyVault.Secrets.dll
 D:\Source\CaliforniaClean\Api.CaliforniaClean\bin\Debug\net6.0\Dapper.dll
 D:\Source\CaliforniaClean\Api.CaliforniaClean\bin\Debug\net6.0\EntityFramework.SqlServer.dll
 D:\Source\CaliforniaClean\Api.CaliforniaClean\bin\Debug\net6.0\EntityFramework.dll

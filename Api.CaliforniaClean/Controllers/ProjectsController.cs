@@ -1,18 +1,16 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+﻿using Api.CaliforniaClean.RequestModel;
+using Api.CaliforniaClean.RequestModel.Views;
 using Api.CaliforniaEF;
 using Api.DbContext.CaliforniaEF;
-using Api.CaliforniaClean.RequestModel;
 using AutoMapper;
-using Api.CaliforniaClean.RequestModel.Views;
-using System.Data.SqlClient;
 using Dapper;
-using System.Linq;
-using NuGet.Protocol;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System.Data.SqlClient;
 
 namespace Api.CaliforniaClean.Controllers
 {
-    [Route("api/[controller]")]
+    [Route ( "api/[controller]" )]
     [ApiController]
     public class ProjectsController : ControllerBase
     {
@@ -20,7 +18,7 @@ namespace Api.CaliforniaClean.Controllers
         private Exception? exception = null;
         private string? ConnectionString = "";
 
-        public ProjectsController(californiaContext context)
+        public ProjectsController ( californiaContext context )
         {
             _context = context;
             ConnectionString = _context.Database.GetConnectionString ( );
@@ -28,7 +26,7 @@ namespace Api.CaliforniaClean.Controllers
 
         // GET: api/Projects
         [HttpGet ( "GetProjects" )]
-        public async Task<ActionResult<IEnumerable<ProjectRequest>>> GetProjects()
+        public async Task<ActionResult<IEnumerable<ProjectRequest>>> GetProjects ( )
         {
             try
             {
@@ -40,7 +38,7 @@ namespace Api.CaliforniaClean.Controllers
 
                 return dto;
             }
-            catch ( Exception ex )
+            catch (Exception ex)
             {
                 exception = ex;
             }
@@ -49,14 +47,14 @@ namespace Api.CaliforniaClean.Controllers
         }
 
         // GET: api/Projects/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<ProjectRequest>> GetProject(int id)
+        [HttpGet ( "{id}" )]
+        public async Task<ActionResult<ProjectRequest>> GetProject ( int id )
         {
             try
             {
                 var project = await _context.Projects.FindAsync ( id );
 
-                if ( project == null )
+                if (project == null)
                 {
                     return NotFound ( );
                 }
@@ -69,26 +67,29 @@ namespace Api.CaliforniaClean.Controllers
 
                 return dto;
             }
-            catch ( Exception ex )
+            catch (Exception ex)
             {
                 exception = ex;
             }
 
             return BadRequest ( exception.Message );
-            
+
         }
 
         // PUT: api/Projects/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutProject(int id, Project project)
+        [HttpPut ( "{id}" )]
+        public async Task<IActionResult> PutProject ( int id , Project project )
         {
             try
             {
-                if ( id != project.ID )
+                if (id != project.ID)
                 {
                     return BadRequest ( );
                 }
+
+                if (!ModelState.IsValid)
+                    return BadRequest ( ModelState );
 
                 _context.Entry ( project ).State = EntityState.Modified;
 
@@ -96,9 +97,9 @@ namespace Api.CaliforniaClean.Controllers
                 {
                     await _context.SaveChangesAsync ( );
                 }
-                catch ( DbUpdateConcurrencyException )
+                catch (DbUpdateConcurrencyException)
                 {
-                    if ( !ProjectExists ( id ) )
+                    if (!ProjectExists ( id ))
                     {
                         return NotFound ( );
                     }
@@ -110,30 +111,33 @@ namespace Api.CaliforniaClean.Controllers
 
                 return NoContent ( );
             }
-            catch ( Exception ex )
+            catch (Exception ex)
             {
                 exception = ex;
             }
 
             return BadRequest ( exception.Message );
-            
+
         }
 
         // POST: api/Projects
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<ProjectRequest>> PostProject(Project project)
+        public async Task<ActionResult<ProjectRequest>> PostProject ( Project project )
         {
             try
             {
                 _context.Projects.Add ( project );
                 try
                 {
+                    if (!ModelState.IsValid)
+                        return BadRequest ( ModelState );
+
                     await _context.SaveChangesAsync ( );
                 }
-                catch ( DbUpdateException )
+                catch (DbUpdateException)
                 {
-                    if ( ProjectExists ( project.ID ) )
+                    if (ProjectExists ( project.ID ))
                     {
                         return Conflict ( );
                     }
@@ -145,23 +149,23 @@ namespace Api.CaliforniaClean.Controllers
 
                 return CreatedAtAction ( "GetProject" , new { id = project.ID } , project );
             }
-            catch ( Exception ex )
+            catch (Exception ex)
             {
                 exception = ex;
             }
 
             return BadRequest ( exception.Message );
-            
+
         }
 
         // DELETE: api/Projects/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteProject(int id)
+        [HttpDelete ( "{id}" )]
+        public async Task<IActionResult> DeleteProject ( int id )
         {
             try
             {
                 var project = await _context.Projects.FindAsync ( id );
-                if ( project == null )
+                if (project == null)
                 {
                     return NotFound ( );
                 }
@@ -171,13 +175,13 @@ namespace Api.CaliforniaClean.Controllers
 
                 return NoContent ( );
             }
-            catch ( Exception ex )
+            catch (Exception ex)
             {
                 exception = ex;
             }
 
             return BadRequest ( exception.Message );
-            
+
         }
 
         [HttpGet ( "GetProjectsList" )]
@@ -185,13 +189,13 @@ namespace Api.CaliforniaClean.Controllers
         {
             try
             {
-                using ( var con = new SqlConnection ( ConnectionString ) )
+                using (var con = new SqlConnection ( ConnectionString ))
                 {
-                    var version = await con.QueryAsync( "SELECT * FROM vListProjects ORDER BY DateProject DESC;" );
-                    return Ok( version.ToList ( ) );
+                    var version = await con.QueryAsync ( "SELECT * FROM vListProjects ORDER BY DateProject DESC;" );
+                    return Ok ( version.ToList ( ) );
                 }
             }
-            catch(Exception ex )
+            catch (Exception ex)
             {
                 exception = ex;
             }
@@ -200,9 +204,9 @@ namespace Api.CaliforniaClean.Controllers
 
         }
 
-        private bool ProjectExists(int id)
+        private bool ProjectExists ( int id )
         {
-            return _context.Projects.Any(e => e.ID == id);
+            return _context.Projects.Any ( e => e.ID == id );
         }
     }
 }

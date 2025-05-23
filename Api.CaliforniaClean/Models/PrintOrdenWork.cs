@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace Api.CaliforniaEF;
 
@@ -7,28 +6,50 @@ public partial class PrintOrdenWork
 {
     public int ID { get; set; }
 
+    [Required]
     public int IDWorkOrder { get; set; }
 
-    public string Compania { get; set; } = null!;
+    [Required]
+    [StringLength ( 50 )]
+    public string Compania { get; set; }
 
-    public string Project { get; set; } = null!;
+    [Required]
+    [StringLength ( 50 )]
+    public string Project { get; set; }
 
+    [Required]
+    [DataType ( DataType.Date )]
     public DateTime DatePrint { get; set; }
 
-    public string Hour { get; set; } = null!;
+    [Required]
+    [StringLength ( 50 )]
+    public string Hour { get; set; }
 
-    public string Contact { get; set; } = null!;
+    [Required]
+    [StringLength ( 50 )]
+    public string Contact { get; set; }
 
-    public string Phone { get; set; } = null!;
+    [Required]
+    [Phone]
+    [StringLength ( 50 )]
+    public string Phone { get; set; }
 
-    public string Address { get; set; } = null!;
+    [Required]
+    [StringLength ( 50 )]
+    public string Address { get; set; }
 
-    public string City { get; set; } = null!;
+    [Required]
+    [StringLength ( 50 )]
+    public string City { get; set; }
 
-    public string Assigned { get; set; } = null!;
+    [Required]
+    [StringLength ( 50 )]
+    public string Assigned { get; set; }
 
+    [StringLength ( 600 )]
     public string? Description { get; set; }
 
+    [StringLength ( 200 )]
     public string? Change { get; set; }
 
     public virtual WorkOrder IDWorkOrderNavigation { get; set; } = null!;

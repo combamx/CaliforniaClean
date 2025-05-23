@@ -1,42 +1,37 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+﻿using Api.CaliforniaEF;
+using Api.DbContext.CaliforniaEF;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Api.CaliforniaEF;
-using Api.DbContext.CaliforniaEF;
 
 namespace Api.CaliforniaClean.Controllers
 {
-    [Route("api/[controller]")]
+    [Route ( "api/[controller]" )]
     [ApiController]
     public class SellersController : ControllerBase
     {
         private readonly californiaContext _context;
         private Exception? exception = null;
-        public SellersController(californiaContext context)
+        public SellersController ( californiaContext context )
         {
             _context = context;
         }
 
         // GET: api/Sellers
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Seller>>> GetSellers()
+        public async Task<ActionResult<IEnumerable<Seller>>> GetSellers ( )
         {
-            return await _context.Sellers.ToListAsync();
+            return await _context.Sellers.ToListAsync ( );
         }
 
         // GET: api/Sellers/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Seller>> GetSeller(int id)
+        [HttpGet ( "{id}" )]
+        public async Task<ActionResult<Seller>> GetSeller ( int id )
         {
-            var seller = await _context.Sellers.FindAsync(id);
+            var seller = await _context.Sellers.FindAsync ( id );
 
             if (seller == null)
             {
-                return NotFound();
+                return NotFound ( );
             }
 
             return seller;
@@ -44,25 +39,28 @@ namespace Api.CaliforniaClean.Controllers
 
         // PUT: api/Sellers/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutSeller(int id, Seller seller)
+        [HttpPut ( "{id}" )]
+        public async Task<IActionResult> PutSeller ( int id , Seller seller )
         {
             if (id != seller.ID)
             {
-                return BadRequest();
+                return BadRequest ( );
             }
 
-            _context.Entry(seller).State = EntityState.Modified;
+            if (!ModelState.IsValid)
+                return BadRequest ( ModelState );
+
+            _context.Entry ( seller ).State = EntityState.Modified;
 
             try
             {
-                await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync ( );
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!SellerExists(id))
+                if (!SellerExists ( id ))
                 {
-                    return NotFound();
+                    return NotFound ( );
                 }
                 else
                 {
@@ -70,39 +68,42 @@ namespace Api.CaliforniaClean.Controllers
                 }
             }
 
-            return NoContent();
+            return NoContent ( );
         }
 
         // POST: api/Sellers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Seller>> PostSeller(Seller seller)
+        public async Task<ActionResult<Seller>> PostSeller ( Seller seller )
         {
-            _context.Sellers.Add(seller);
-            await _context.SaveChangesAsync();
+            if (!ModelState.IsValid)
+                return BadRequest ( ModelState );
 
-            return CreatedAtAction("GetSeller", new { id = seller.ID }, seller);
+            _context.Sellers.Add ( seller );
+            await _context.SaveChangesAsync ( );
+
+            return CreatedAtAction ( "GetSeller" , new { id = seller.ID } , seller );
         }
 
         // DELETE: api/Sellers/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteSeller(int id)
+        [HttpDelete ( "{id}" )]
+        public async Task<IActionResult> DeleteSeller ( int id )
         {
-            var seller = await _context.Sellers.FindAsync(id);
+            var seller = await _context.Sellers.FindAsync ( id );
             if (seller == null)
             {
-                return NotFound();
+                return NotFound ( );
             }
 
-            _context.Sellers.Remove(seller);
-            await _context.SaveChangesAsync();
+            _context.Sellers.Remove ( seller );
+            await _context.SaveChangesAsync ( );
 
-            return NoContent();
+            return NoContent ( );
         }
 
-        private bool SellerExists(int id)
+        private bool SellerExists ( int id )
         {
-            return _context.Sellers.Any(e => e.ID == id);
+            return _context.Sellers.Any ( e => e.ID == id );
         }
     }
 }

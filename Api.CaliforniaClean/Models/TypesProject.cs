@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace Api.CaliforniaEF;
 
@@ -7,7 +6,9 @@ public partial class TypesProject
 {
     public int ID { get; set; }
 
-    public string Description { get; set; } = null!;
+    [Required]
+    [StringLength ( 50 )]
+    public string Description { get; set; }
 
-    public virtual ICollection<Project> Projects { get; } = new List<Project>();
+    public virtual ICollection<Project> Projects { get; } = new List<Project> ( );
 }

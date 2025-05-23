@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace Api.CaliforniaEF;
 
@@ -7,7 +6,9 @@ public partial class TypesOrderWork
 {
     public int ID { get; set; }
 
-    public string Description { get; set; } = null!;
+    [Required]
+    [StringLength ( 50 )]
+    public string Description { get; set; }
 
-    public virtual ICollection<WorkOrder> WorkOrders { get; } = new List<WorkOrder>();
+    public virtual ICollection<WorkOrder> WorkOrders { get; } = new List<WorkOrder> ( );
 }

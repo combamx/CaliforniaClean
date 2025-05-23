@@ -1,32 +1,27 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+﻿using Api.CaliforniaClean.RequestModel;
 using Api.CaliforniaEF;
 using Api.DbContext.CaliforniaEF;
-using Api.CaliforniaClean.RequestModel;
 using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace Api.CaliforniaClean.Controllers
 {
-    [Route("api/[controller]")]
+    [Route ( "api/[controller]" )]
     [ApiController]
     public class CommentsWOesController : ControllerBase
     {
         private readonly californiaContext _context;
         private Exception? exception = null;
 
-        public CommentsWOesController(californiaContext context)
+        public CommentsWOesController ( californiaContext context )
         {
             _context = context;
         }
 
         // GET: api/CommentsWOes
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<CommentsWORequest>>> GetCommentsWOs()
+        public async Task<ActionResult<IEnumerable<CommentsWORequest>>> GetCommentsWOs ( )
         {
             try
             {
@@ -38,7 +33,7 @@ namespace Api.CaliforniaClean.Controllers
 
                 return dto;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 exception = ex;
             }
@@ -48,14 +43,14 @@ namespace Api.CaliforniaClean.Controllers
         }
 
         // GET: api/CommentsWOes/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<CommentsWORequest>> GetCommentsWO(int id)
+        [HttpGet ( "{id}" )]
+        public async Task<ActionResult<CommentsWORequest>> GetCommentsWO ( int id )
         {
             try
             {
                 var commentsWO = await _context.CommentsWOs.FindAsync ( id );
 
-                if ( commentsWO == null )
+                if (commentsWO == null)
                 {
                     return NotFound ( );
                 }
@@ -68,7 +63,7 @@ namespace Api.CaliforniaClean.Controllers
                 return dto;
 
             }
-            catch ( Exception ex )
+            catch (Exception ex)
             {
                 exception = ex;
             }
@@ -79,15 +74,18 @@ namespace Api.CaliforniaClean.Controllers
 
         // PUT: api/CommentsWOes/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutCommentsWO(int id, CommentsWO commentsWO)
+        [HttpPut ( "{id}" )]
+        public async Task<IActionResult> PutCommentsWO ( int id , CommentsWO commentsWO )
         {
             try
             {
-                if ( id != commentsWO.ID )
+                if (id != commentsWO.ID)
                 {
                     return BadRequest ( );
                 }
+
+                if (!ModelState.IsValid)
+                    return BadRequest ( ModelState );
 
                 _context.Entry ( commentsWO ).State = EntityState.Modified;
 
@@ -95,9 +93,9 @@ namespace Api.CaliforniaClean.Controllers
                 {
                     await _context.SaveChangesAsync ( );
                 }
-                catch ( DbUpdateConcurrencyException )
+                catch (DbUpdateConcurrencyException)
                 {
-                    if ( !CommentsWOExists ( id ) )
+                    if (!CommentsWOExists ( id ))
                     {
                         return NotFound ( );
                     }
@@ -109,45 +107,48 @@ namespace Api.CaliforniaClean.Controllers
 
                 return NoContent ( );
             }
-            catch ( Exception ex )
+            catch (Exception ex)
             {
                 exception = ex;
             }
 
             return BadRequest ( exception.Message );
 
-            
+
         }
 
         // POST: api/CommentsWOes
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<CommentsWORequest>> PostCommentsWO(CommentsWO commentsWO)
+        public async Task<ActionResult<CommentsWORequest>> PostCommentsWO ( CommentsWO commentsWO )
         {
             try
             {
+                if (!ModelState.IsValid)
+                    return BadRequest ( ModelState );
+
                 _context.CommentsWOs.Add ( commentsWO );
                 await _context.SaveChangesAsync ( );
 
                 return CreatedAtAction ( "GetCommentsWO" , new { id = commentsWO.ID } , commentsWO );
             }
-            catch ( Exception ex )
+            catch (Exception ex)
             {
                 exception = ex;
             }
 
             return BadRequest ( exception.Message );
-            
+
         }
 
         // DELETE: api/CommentsWOes/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteCommentsWO(int id)
+        [HttpDelete ( "{id}" )]
+        public async Task<IActionResult> DeleteCommentsWO ( int id )
         {
             try
             {
                 var commentsWO = await _context.CommentsWOs.FindAsync ( id );
-                if ( commentsWO == null )
+                if (commentsWO == null)
                 {
                     return NotFound ( );
                 }
@@ -157,18 +158,18 @@ namespace Api.CaliforniaClean.Controllers
 
                 return NoContent ( );
             }
-            catch ( Exception ex )
+            catch (Exception ex)
             {
                 exception = ex;
             }
 
             return BadRequest ( exception.Message );
-            
+
         }
 
-        private bool CommentsWOExists(int id)
+        private bool CommentsWOExists ( int id )
         {
-            return _context.CommentsWOs.Any(e => e.ID == id);
+            return _context.CommentsWOs.Any ( e => e.ID == id );
         }
     }
 }

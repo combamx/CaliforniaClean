@@ -1,42 +1,37 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+﻿using Api.CaliforniaEF;
+using Api.DbContext.CaliforniaEF;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Api.CaliforniaEF;
-using Api.DbContext.CaliforniaEF;
 
 namespace Api.CaliforniaClean.Controllers
 {
-    [Route("api/[controller]")]
+    [Route ( "api/[controller]" )]
     [ApiController]
     public class WorkersController : ControllerBase
     {
         private readonly californiaContext _context;
         private Exception? exception = null;
-        public WorkersController(californiaContext context)
+        public WorkersController ( californiaContext context )
         {
             _context = context;
         }
 
         // GET: api/Workers
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Worker>>> GetWorkers()
+        public async Task<ActionResult<IEnumerable<Worker>>> GetWorkers ( )
         {
-            return await _context.Workers.ToListAsync();
+            return await _context.Workers.ToListAsync ( );
         }
 
         // GET: api/Workers/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Worker>> GetWorker(int id)
+        [HttpGet ( "{id}" )]
+        public async Task<ActionResult<Worker>> GetWorker ( int id )
         {
-            var worker = await _context.Workers.FindAsync(id);
+            var worker = await _context.Workers.FindAsync ( id );
 
             if (worker == null)
             {
-                return NotFound();
+                return NotFound ( );
             }
 
             return worker;
@@ -44,25 +39,28 @@ namespace Api.CaliforniaClean.Controllers
 
         // PUT: api/Workers/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutWorker(int id, Worker worker)
+        [HttpPut ( "{id}" )]
+        public async Task<IActionResult> PutWorker ( int id , Worker worker )
         {
             if (id != worker.ID)
             {
-                return BadRequest();
+                return BadRequest ( );
             }
 
-            _context.Entry(worker).State = EntityState.Modified;
+            if (!ModelState.IsValid)
+                return BadRequest ( ModelState );
+
+            _context.Entry ( worker ).State = EntityState.Modified;
 
             try
             {
-                await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync ( );
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!WorkerExists(id))
+                if (!WorkerExists ( id ))
                 {
-                    return NotFound();
+                    return NotFound ( );
                 }
                 else
                 {
@@ -70,39 +68,42 @@ namespace Api.CaliforniaClean.Controllers
                 }
             }
 
-            return NoContent();
+            return NoContent ( );
         }
 
         // POST: api/Workers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Worker>> PostWorker(Worker worker)
+        public async Task<ActionResult<Worker>> PostWorker ( Worker worker )
         {
-            _context.Workers.Add(worker);
-            await _context.SaveChangesAsync();
+            if (!ModelState.IsValid)
+                return BadRequest ( ModelState );
 
-            return CreatedAtAction("GetWorker", new { id = worker.ID }, worker);
+            _context.Workers.Add ( worker );
+            await _context.SaveChangesAsync ( );
+
+            return CreatedAtAction ( "GetWorker" , new { id = worker.ID } , worker );
         }
 
         // DELETE: api/Workers/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteWorker(int id)
+        [HttpDelete ( "{id}" )]
+        public async Task<IActionResult> DeleteWorker ( int id )
         {
-            var worker = await _context.Workers.FindAsync(id);
+            var worker = await _context.Workers.FindAsync ( id );
             if (worker == null)
             {
-                return NotFound();
+                return NotFound ( );
             }
 
-            _context.Workers.Remove(worker);
-            await _context.SaveChangesAsync();
+            _context.Workers.Remove ( worker );
+            await _context.SaveChangesAsync ( );
 
-            return NoContent();
+            return NoContent ( );
         }
 
-        private bool WorkerExists(int id)
+        private bool WorkerExists ( int id )
         {
-            return _context.Workers.Any(e => e.ID == id);
+            return _context.Workers.Any ( e => e.ID == id );
         }
     }
 }

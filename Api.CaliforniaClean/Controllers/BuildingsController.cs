@@ -1,18 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+﻿using Api.CaliforniaClean.RequestModel;
 using Api.CaliforniaEF;
 using Api.DbContext.CaliforniaEF;
 using AutoMapper;
-using Api.CaliforniaClean.RequestModel;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace Api.CaliforniaClean.Controllers
 {
-    [Route("api/[controller]")]
+    [Route ( "api/[controller]" )]
     [ApiController]
     public class BuildingsController : ControllerBase
     {
@@ -26,11 +21,11 @@ namespace Api.CaliforniaClean.Controllers
 
         // GET: api/Buildings
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<BuildingRequest>>> GetBuildings()
+        public async Task<ActionResult<IEnumerable<BuildingRequest>>> GetBuildings ( )
         {
             try
             {
-                var buildings = await _context.Buildings.ToListAsync();
+                var buildings = await _context.Buildings.ToListAsync ( );
                 var config = new MapperConfiguration ( cfg => cfg.CreateMap<Building , BuildingRequest> ( ) );
 
                 var mapper = new Mapper ( config );
@@ -47,14 +42,14 @@ namespace Api.CaliforniaClean.Controllers
         }
 
         // GET: api/Buildings/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<BuildingRequest>> GetBuilding(int id)
+        [HttpGet ( "{id}" )]
+        public async Task<ActionResult<BuildingRequest>> GetBuilding ( int id )
         {
             try
             {
                 var building = await _context.Buildings.FindAsync ( id );
 
-                if ( building == null )
+                if (building == null)
                 {
                     return NotFound ( );
                 }
@@ -66,7 +61,7 @@ namespace Api.CaliforniaClean.Controllers
 
                 return dto;
             }
-            catch ( Exception ex )
+            catch (Exception ex)
             {
                 exception = ex;
             }
@@ -77,15 +72,18 @@ namespace Api.CaliforniaClean.Controllers
 
         // PUT: api/Buildings/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutBuilding(int id, Building building)
+        [HttpPut ( "{id}" )]
+        public async Task<IActionResult> PutBuilding ( int id , Building building )
         {
             try
             {
-                if ( id != building.ID )
+                if (id != building.ID)
                 {
                     return BadRequest ( );
                 }
+
+                if (!ModelState.IsValid)
+                    return BadRequest ( ModelState );
 
                 _context.Entry ( building ).State = EntityState.Modified;
 
@@ -93,9 +91,9 @@ namespace Api.CaliforniaClean.Controllers
                 {
                     await _context.SaveChangesAsync ( );
                 }
-                catch ( DbUpdateConcurrencyException )
+                catch (DbUpdateConcurrencyException)
                 {
-                    if ( !BuildingExists ( id ) )
+                    if (!BuildingExists ( id ))
                     {
                         return NotFound ( );
                     }
@@ -107,7 +105,7 @@ namespace Api.CaliforniaClean.Controllers
 
                 return NoContent ( );
             }
-            catch(Exception ex )
+            catch (Exception ex)
             {
                 exception = ex;
             }
@@ -119,16 +117,19 @@ namespace Api.CaliforniaClean.Controllers
         // POST: api/Buildings
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<BuildingRequest>> PostBuilding(Building building)
+        public async Task<ActionResult<BuildingRequest>> PostBuilding ( Building building )
         {
             try
             {
+                if (!ModelState.IsValid)
+                    return BadRequest ( ModelState );
+
                 _context.Buildings.Add ( building );
                 await _context.SaveChangesAsync ( );
 
                 return CreatedAtAction ( "GetBuilding" , new { id = building.ID } , building );
             }
-            catch(Exception ex )
+            catch (Exception ex)
             {
                 exception = ex;
             }
@@ -137,13 +138,13 @@ namespace Api.CaliforniaClean.Controllers
         }
 
         // DELETE: api/Buildings/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteBuilding(int id)
+        [HttpDelete ( "{id}" )]
+        public async Task<IActionResult> DeleteBuilding ( int id )
         {
             try
             {
                 var building = await _context.Buildings.FindAsync ( id );
-                if ( building == null )
+                if (building == null)
                 {
                     return NotFound ( );
                 }
@@ -153,18 +154,18 @@ namespace Api.CaliforniaClean.Controllers
 
                 return NoContent ( );
             }
-            catch ( Exception ex )
+            catch (Exception ex)
             {
                 exception = ex;
             }
 
             return BadRequest ( exception.Message );
-            
+
         }
 
-        private bool BuildingExists(int id)
+        private bool BuildingExists ( int id )
         {
-            return _context.Buildings.Any(e => e.ID == id);
+            return _context.Buildings.Any ( e => e.ID == id );
         }
     }
 }

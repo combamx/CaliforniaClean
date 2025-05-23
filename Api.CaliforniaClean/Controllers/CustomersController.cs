@@ -1,4 +1,5 @@
-﻿using Api.CaliforniaClean.RequestModel;
+﻿using Api.CaliforniaClean.Helpers;
+using Api.CaliforniaClean.RequestModel;
 using Api.CaliforniaEF;
 using Api.DbContext.CaliforniaEF;
 using AutoMapper;
@@ -23,25 +24,35 @@ namespace Api.CaliforniaClean.Controllers
 
         // GET: api/Customers
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<CustomerRequest>>> GetCustomers ( )
+        public async Task<ActionResult<IEnumerable<CustomerRequest>>> GetCustomers ( [FromQuery] PaginationParams pagination )
         {
             try
             {
-                var buildings = await _context.Customers.ToListAsync ( );
-                var config = new MapperConfiguration ( cfg => cfg.CreateMap<Customer , CustomerRequest> ( ) );
+                var query = _context.Customers.AsQueryable ( );
 
+                // Ordenamiento dinámico
+                query = query.ApplySorting ( pagination.OrderBy , pagination.Desc );
+
+                // Total para encabezado
+                var total = await query.CountAsync ( );
+                Response.Headers.Add ( "X-Total-Count" , total.ToString ( ) );
+
+                // Paginación
+                var paged = await query.ApplyPagination ( pagination ).ToListAsync ( );
+
+                // Mapear con AutoMapper
+                var config = new MapperConfiguration ( cfg => cfg.CreateMap<Customer , CustomerRequest> ( ) );
                 var mapper = new Mapper ( config );
-                List<CustomerRequest> dto = mapper.Map<List<CustomerRequest>> ( buildings );
+                var dto = mapper.Map<List<CustomerRequest>> ( paged );
 
                 return dto;
             }
             catch (Exception ex)
             {
-                exception = ex;
+                return BadRequest ( ex.Message );
             }
-
-            return BadRequest ( exception.Message );
         }
+
 
         // GET: api/Customers/5
         [HttpGet ( "{id}" )]

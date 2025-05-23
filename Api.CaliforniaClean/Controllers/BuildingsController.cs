@@ -1,12 +1,15 @@
-﻿using Api.CaliforniaClean.RequestModel;
+﻿using Api.CaliforniaClean.Helpers;
+using Api.CaliforniaClean.RequestModel;
 using Api.CaliforniaEF;
 using Api.DbContext.CaliforniaEF;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace Api.CaliforniaClean.Controllers
 {
+    [Authorize]
     [Route ( "api/[controller]" )]
     [ApiController]
     public class BuildingsController : ControllerBase
@@ -21,25 +24,35 @@ namespace Api.CaliforniaClean.Controllers
 
         // GET: api/Buildings
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<BuildingRequest>>> GetBuildings ( )
+        public async Task<ActionResult<IEnumerable<BuildingRequest>>> GetBuildings ( [FromQuery] PaginationParams pagination )
         {
             try
             {
-                var buildings = await _context.Buildings.ToListAsync ( );
-                var config = new MapperConfiguration ( cfg => cfg.CreateMap<Building , BuildingRequest> ( ) );
+                var query = _context.Buildings.AsQueryable ( );
 
+                // Ordenamiento dinámico
+                query = query.ApplySorting ( pagination.OrderBy , pagination.Desc );
+
+                // Encabezado con el total
+                var total = await query.CountAsync ( );
+                Response.Headers.Add ( "X-Total-Count" , total.ToString ( ) );
+
+                // Paginación
+                var paged = await query.ApplyPagination ( pagination ).ToListAsync ( );
+
+                // Mapeo con AutoMapper
+                var config = new MapperConfiguration ( cfg => cfg.CreateMap<Building , BuildingRequest> ( ) );
                 var mapper = new Mapper ( config );
-                List<BuildingRequest> dto = mapper.Map<List<BuildingRequest>> ( buildings );
+                var dto = mapper.Map<List<BuildingRequest>> ( paged );
 
                 return dto;
             }
             catch (Exception ex)
             {
-                exception = ex;
+                return BadRequest ( ex.Message );
             }
-
-            return BadRequest ( exception.Message );
         }
+
 
         // GET: api/Buildings/5
         [HttpGet ( "{id}" )]

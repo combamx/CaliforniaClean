@@ -1,4 +1,5 @@
-﻿using Api.CaliforniaClean.RequestModel;
+﻿using Api.CaliforniaClean.Helpers;
+using Api.CaliforniaClean.RequestModel;
 using Api.CaliforniaClean.RequestModel.Views;
 using Api.CaliforniaEF;
 using Api.DbContext.CaliforniaEF;
@@ -26,24 +27,32 @@ namespace Api.CaliforniaClean.Controllers
 
         // GET: api/Projects
         [HttpGet ( "GetProjects" )]
-        public async Task<ActionResult<IEnumerable<ProjectRequest>>> GetProjects ( )
+        public async Task<ActionResult<IEnumerable<ProjectRequest>>> GetProjects ( [FromQuery] PaginationParams pagination )
         {
             try
             {
-                var projects = await _context.Projects.ToListAsync ( );
-                var config = new MapperConfiguration ( cfg => cfg.CreateMap<Project , ProjectRequest> ( ) );
+                var query = _context.Projects.AsQueryable ( );
 
+                // Aplicar ordenamiento dinámico
+                query = query.ApplySorting ( pagination.OrderBy , pagination.Desc );
+
+                var total = await query.CountAsync ( );
+                Response.Headers.Add ( "X-Total-Count" , total.ToString ( ) );
+
+                // Paginación
+                var paged = await query.ApplyPagination ( pagination ).ToListAsync ( );
+
+                // Mapeo
+                var config = new MapperConfiguration ( cfg => cfg.CreateMap<Project , ProjectRequest> ( ) );
                 var mapper = new Mapper ( config );
-                List<ProjectRequest> dto = mapper.Map<List<ProjectRequest>> ( projects );
+                var dto = mapper.Map<List<ProjectRequest>> ( paged );
 
                 return dto;
             }
             catch (Exception ex)
             {
-                exception = ex;
+                return BadRequest ( ex.Message );
             }
-
-            return BadRequest ( exception.Message );
         }
 
         // GET: api/Projects/5

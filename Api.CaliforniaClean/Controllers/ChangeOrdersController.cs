@@ -1,12 +1,15 @@
-﻿using Api.CaliforniaClean.RequestModel;
+﻿using Api.CaliforniaClean.Helpers;
+using Api.CaliforniaClean.RequestModel;
 using Api.CaliforniaEF;
 using Api.DbContext.CaliforniaEF;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace Api.CaliforniaClean.Controllers
 {
+    [Authorize]
     [Route ( "api/[controller]" )]
     [ApiController]
     public class ChangeOrdersController : ControllerBase
@@ -21,27 +24,35 @@ namespace Api.CaliforniaClean.Controllers
 
         // GET: api/ChangeOrders
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ChangeOrderRequest>>> GetChangeOrders ( )
+        public async Task<ActionResult<IEnumerable<ChangeOrderRequest>>> GetChangeOrders ( [FromQuery] PaginationParams pagination )
         {
             try
             {
-                var buildings = await _context.ChangeOrders.ToListAsync ( );
-                var config = new MapperConfiguration ( cfg => cfg.CreateMap<ChangeOrder , ChangeOrderRequest> ( ) );
+                var query = _context.ChangeOrders.AsQueryable ( );
 
+                // Orden dinámico
+                query = query.ApplySorting ( pagination.OrderBy , pagination.Desc );
+
+                // Total para encabezado
+                var total = await query.CountAsync ( );
+                Response.Headers.Add ( "X-Total-Count" , total.ToString ( ) );
+
+                // Paginación
+                var paged = await query.ApplyPagination ( pagination ).ToListAsync ( );
+
+                // Mapeo
+                var config = new MapperConfiguration ( cfg => cfg.CreateMap<ChangeOrder , ChangeOrderRequest> ( ) );
                 var mapper = new Mapper ( config );
-                List<ChangeOrderRequest> dto = mapper.Map<List<ChangeOrderRequest>> ( buildings );
+                var dto = mapper.Map<List<ChangeOrderRequest>> ( paged );
 
                 return dto;
-
             }
             catch (Exception ex)
             {
-                exception = ex;
+                return BadRequest ( ex.Message );
             }
-
-            return BadRequest ( exception.Message );
-
         }
+
 
         // GET: api/ChangeOrders/5
         [HttpGet ( "{id}" )]

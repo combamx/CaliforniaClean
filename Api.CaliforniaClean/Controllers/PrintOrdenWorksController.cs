@@ -1,10 +1,13 @@
-﻿using Api.CaliforniaEF;
+﻿using Api.CaliforniaClean.Helpers;
+using Api.CaliforniaEF;
 using Api.DbContext.CaliforniaEF;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace Api.CaliforniaClean.Controllers
 {
+    [Authorize]
     [Route ( "api/[controller]" )]
     [ApiController]
     public class PrintOrdenWorksController : ControllerBase
@@ -18,10 +21,30 @@ namespace Api.CaliforniaClean.Controllers
 
         // GET: api/PrintOrdenWorks
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<PrintOrdenWork>>> GetPrintOrdenWorks ( )
+        public async Task<ActionResult<IEnumerable<PrintOrdenWork>>> GetPrintOrdenWorks ( [FromQuery] PaginationParams pagination )
         {
-            return await _context.PrintOrdenWorks.ToListAsync ( );
+            try
+            {
+                var query = _context.PrintOrdenWorks.AsQueryable ( );
+
+                // Orden dinámico
+                query = query.ApplySorting ( pagination.OrderBy , pagination.Desc );
+
+                // Total para encabezado
+                var total = await query.CountAsync ( );
+                Response.Headers.Add ( "X-Total-Count" , total.ToString ( ) );
+
+                // Aplicar paginación
+                var paged = await query.ApplyPagination ( pagination ).ToListAsync ( );
+
+                return Ok ( paged );
+            }
+            catch (Exception ex)
+            {
+                return BadRequest ( ex.Message );
+            }
         }
+
 
         // GET: api/PrintOrdenWorks/5
         [HttpGet ( "{id}" )]

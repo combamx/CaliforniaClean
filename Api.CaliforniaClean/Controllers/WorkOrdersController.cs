@@ -1,4 +1,5 @@
-﻿using Api.CaliforniaEF;
+﻿using Api.CaliforniaClean.Helpers;
+using Api.CaliforniaEF;
 using Api.DbContext.CaliforniaEF;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -18,10 +19,30 @@ namespace Api.CaliforniaClean.Controllers
 
         // GET: api/WorkOrders
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<WorkOrder>>> GetWorkOrders ( )
+        public async Task<ActionResult<IEnumerable<WorkOrder>>> GetWorkOrders ( [FromQuery] PaginationParams pagination )
         {
-            return await _context.WorkOrders.ToListAsync ( );
+            try
+            {
+                var query = _context.WorkOrders.AsQueryable ( );
+
+                // Ordenamiento dinámico
+                query = query.ApplySorting ( pagination.OrderBy , pagination.Desc );
+
+                // Total para encabezado
+                var total = await query.CountAsync ( );
+                Response.Headers.Add ( "X-Total-Count" , total.ToString ( ) );
+
+                // Aplicar paginación
+                var paged = await query.ApplyPagination ( pagination ).ToListAsync ( );
+
+                return Ok ( paged );
+            }
+            catch (Exception ex)
+            {
+                return BadRequest ( ex.Message );
+            }
         }
+
 
         // GET: api/WorkOrders/5
         [HttpGet ( "{id}" )]

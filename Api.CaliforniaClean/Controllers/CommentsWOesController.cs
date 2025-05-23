@@ -1,12 +1,15 @@
-﻿using Api.CaliforniaClean.RequestModel;
+﻿using Api.CaliforniaClean.Helpers;
+using Api.CaliforniaClean.RequestModel;
 using Api.CaliforniaEF;
 using Api.DbContext.CaliforniaEF;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace Api.CaliforniaClean.Controllers
 {
+    [Authorize]
     [Route ( "api/[controller]" )]
     [ApiController]
     public class CommentsWOesController : ControllerBase
@@ -21,26 +24,35 @@ namespace Api.CaliforniaClean.Controllers
 
         // GET: api/CommentsWOes
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<CommentsWORequest>>> GetCommentsWOs ( )
+        public async Task<ActionResult<IEnumerable<CommentsWORequest>>> GetCommentsWOs ( [FromQuery] PaginationParams pagination )
         {
             try
             {
-                var buildings = await _context.CommentsWOs.ToListAsync ( );
-                var config = new MapperConfiguration ( cfg => cfg.CreateMap<CommentsWO , CommentsWORequest> ( ) );
+                var query = _context.CommentsWOs.AsQueryable ( );
 
+                // Ordenamiento dinámico
+                query = query.ApplySorting ( pagination.OrderBy , pagination.Desc );
+
+                // Total para encabezado
+                var total = await query.CountAsync ( );
+                Response.Headers.Add ( "X-Total-Count" , total.ToString ( ) );
+
+                // Aplicar paginación
+                var paged = await query.ApplyPagination ( pagination ).ToListAsync ( );
+
+                // Mapeo a DTO
+                var config = new MapperConfiguration ( cfg => cfg.CreateMap<CommentsWO , CommentsWORequest> ( ) );
                 var mapper = new Mapper ( config );
-                List<CommentsWORequest> dto = mapper.Map<List<CommentsWORequest>> ( buildings );
+                var dto = mapper.Map<List<CommentsWORequest>> ( paged );
 
                 return dto;
             }
             catch (Exception ex)
             {
-                exception = ex;
+                return BadRequest ( ex.Message );
             }
-
-            return BadRequest ( exception.Message );
-
         }
+
 
         // GET: api/CommentsWOes/5
         [HttpGet ( "{id}" )]

@@ -1,16 +1,19 @@
-﻿using Api.CaliforniaClean.Helpers;
+﻿
+using Api.CaliforniaClean.Helpers;
 using Api.CaliforniaClean.RequestModel;
 using Api.CaliforniaClean.RequestModel.Views;
 using Api.CaliforniaEF;
 using Api.DbContext.CaliforniaEF;
 using AutoMapper;
 using Dapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Data.SqlClient;
 
 namespace Api.CaliforniaClean.Controllers
 {
+    [Authorize]
     [Route ( "api/[controller]" )]
     [ApiController]
     public class ProjectsController : ControllerBase

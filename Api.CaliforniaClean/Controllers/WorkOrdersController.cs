@@ -1,11 +1,13 @@
 ﻿using Api.CaliforniaClean.Helpers;
 using Api.CaliforniaEF;
 using Api.DbContext.CaliforniaEF;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace Api.CaliforniaClean.Controllers
 {
+    [Authorize]
     [Route ( "api/[controller]" )]
     [ApiController]
     public class WorkOrdersController : ControllerBase

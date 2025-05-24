@@ -40,7 +40,6 @@ CaliforniaClean/
 ├── appsettings.json # Configuración general y secreta
 ├── Program.cs # Entrada principal
 
-
 ---
 
 ## ⚙️ Configuración

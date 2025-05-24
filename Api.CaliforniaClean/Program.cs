@@ -1,74 +1,30 @@
 ﻿using Api.CaliforniaClean.Middleware;
 using Api.DbContext.CaliforniaEF;
-using Azure.Identity;
-using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
-using System.Text.Json;
-using Azure.Security.KeyVault.Secrets;
-using Azure.Extensions.AspNetCore.Configuration.Secrets;
-using System.Security.Cryptography.X509Certificates;
-
-
+using System.Text;
 
 var builder = WebApplication.CreateBuilder ( args );
 
+// 🛠 Configuración de la cadena de conexión
+var connectionString = builder.Configuration.GetConnectionString ( "california_db" );
+builder.Services.AddDbContext<californiaContext> ( options =>
+    options.UseSqlServer ( connectionString ) );
 
-var keyVaultEndpoint = builder.Configuration [ "AzureKeyVault:VaultUrl" ];
-var clientId = builder.Configuration [ "AzureKeyVault:ClientId" ];
-var clientSecret = builder.Configuration [ "AzureKeyVault:ClientSecret" ];
-
-var credential = new DefaultAzureCredential ( );
-var client = new SecretClient ( new Uri ( keyVaultEndpoint ) , credential );
-
-var secret = client.GetSecret ( clientSecret );
-
-var ConnectionString = secret.Value.Value; //builder.Configuration.GetConnectionString ( "california_db" );
-
-// Add services to the container.
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer ( );
-builder.Services.AddSwaggerGen ( c =>
-{
-    c.SwaggerDoc ( "v1" , new ( ) { Title = "Api.CaliforniaClean" , Version = "v1" } );
-
-    // 🔐 Añadir soporte para JWT
-    c.AddSecurityDefinition ( "Bearer" , new Microsoft.OpenApi.Models.OpenApiSecurityScheme
+// ⚙️ Configuración de controladores y JSON
+builder.Services.AddControllers ( )
+    .AddNewtonsoftJson ( options =>
     {
-        In = Microsoft.OpenApi.Models.ParameterLocation.Header ,
-        Description = "Ingresa el token JWT como: Bearer {token}" ,
-        Name = "Authorization" ,
-        Type = Microsoft.OpenApi.Models.SecuritySchemeType.ApiKey ,
-        Scheme = "Bearer"
+        options.SerializerSettings.Converters.Add ( new StringEnumConverter ( new CamelCaseNamingStrategy ( true , true ) ) );
+        options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
     } );
 
-    c.AddSecurityRequirement ( new Microsoft.OpenApi.Models.OpenApiSecurityRequirement
-    {
-        {
-            new Microsoft.OpenApi.Models.OpenApiSecurityScheme
-            {
-                Reference = new Microsoft.OpenApi.Models.OpenApiReference
-                {
-                    Type = Microsoft.OpenApi.Models.ReferenceType.SecurityScheme,
-                    Id = "Bearer"
-                }
-            },
-            Array.Empty<string>()
-        }
-    } );
-} );
-
-builder.Services.AddDbContext<californiaContext> ( options => options.UseSqlServer ( ConnectionString ) );
-
-builder.Services.AddControllersWithViews ( ).AddNewtonsoftJson ( options =>
-{
-    options.SerializerSettings.Converters.Add ( new StringEnumConverter ( new CamelCaseNamingStrategy ( true , true ) ) );
-    options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
-} );
-
+// 🔐 Configuración de autenticación JWT
 var jwtSettings = builder.Configuration.GetSection ( "Jwt" );
 var key = Encoding.UTF8.GetBytes ( jwtSettings [ "Key" ] );
 
@@ -91,31 +47,52 @@ builder.Services.AddAuthentication ( options =>
     };
 } );
 
-builder.Services.AddMemoryCache ( );
-builder.Services.Configure<IpRateLimitOptions> ( builder.Configuration.GetSection ( "IpRateLimiting" ) );
-builder.Services.AddInMemoryRateLimiting ( );
-builder.Services.AddSingleton<IRateLimitConfiguration , RateLimitConfiguration> ( );
+// 📦 Configuración de Swagger con soporte JWT
+builder.Services.AddEndpointsApiExplorer ( );
+builder.Services.AddSwaggerGen ( c =>
+{
+    c.SwaggerDoc ( "v1" , new OpenApiInfo { Title = "Api.CaliforniaClean" , Version = "v1" } );
 
+    c.AddSecurityDefinition ( "Bearer" , new OpenApiSecurityScheme
+    {
+        In = ParameterLocation.Header ,
+        Description = "Ingresa el token como: Bearer {tu_token}" ,
+        Name = "Authorization" ,
+        Type = SecuritySchemeType.ApiKey ,
+        Scheme = "Bearer"
+    } );
 
+    c.AddSecurityRequirement ( new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            Array.Empty<string>()
+        }
+    } );
+} );
+
+// 🚀 Aplicación
 var app = builder.Build ( );
 
-
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment ( ))
 {
     app.UseSwagger ( );
     app.UseSwaggerUI ( );
 }
 
-app.UseHttpsRedirection ( );
+// 🛡️ Middlewares personalizados
+app.UseRequestMonitor ( );      // Monitorea IP y user-agent y envía alertas por correo
+app.UseSecurityHeaders ( );     // Agrega cabeceras de seguridad HTTP
 
-app.UseRequestMonitor ( );
-app.UseSecurityHeaders ( );
+app.UseHttpsRedirection ( );
 app.UseAuthentication ( );
 app.UseAuthorization ( );
-
-app.UseCors ( "AllowFrontend" );
-
 app.MapControllers ( );
-
 app.Run ( );

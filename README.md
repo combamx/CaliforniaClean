@@ -4,20 +4,6 @@ API RESTful desarrollada con **ASP.NET Core Web API** para la gestión de proyec
 
 ---
 
-## 🚀 Tecnologías
-
-- ASP.NET Core 8
-- Entity Framework Core 9
-- SQL Server
-- JWT Authentication
-- AutoMapper
-- Swagger / OpenAPI 3.0
-- Seguridad con middlewares personalizados
-- Paginación y ordenamiento dinámico
-- Envío de alertas por correo (SMTP)
-
----
-
 ## 📁 Estructura del proyecto
 ChatGPT dijo:
 Por supuesto, Omar. Aquí tienes un README.md profesional para tu proyecto CaliforniaClean API en C# (.NET Core):
@@ -26,9 +12,6 @@ Por supuesto, Omar. Aquí tienes un README.md profesional para tu proyecto Calif
 markdown
 Copiar
 Editar
-# 🧼 CaliforniaClean API - .NET Core
-
-API RESTful desarrollada con **ASP.NET Core Web API** para la gestión de proyectos de limpieza profesional. Esta API permite administrar clientes, vendedores, órdenes de trabajo, documentos, comentarios, trabajadores y más.
 
 ---
 

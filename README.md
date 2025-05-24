@@ -32,13 +32,13 @@ Editar
 ## 📁 Estructura del proyecto
 
 CaliforniaClean/
-  ├── Controllers/ # Controladores REST por entidad
-  ├── Models/ # Entidades EF + DTOs
-  ├── Middleware/ # Seguridad, monitoreo y cabeceras
-  ├── Helpers/ # Paginación y extensiones
-  ├── DbContext/ # Contexto de Entity Framework
-  ├── appsettings.json # Configuración general y secreta
-  ├── Program.cs # Entrada principal
+  - ├── Controllers/ # Controladores REST por entidad
+  - ├── Models/ # Entidades EF + DTOs
+  - ├── Middleware/ # Seguridad, monitoreo y cabeceras
+  - ├── Helpers/ # Paginación y extensiones
+  - ├── DbContext/ # Contexto de Entity Framework
+  - ├── appsettings.json # Configuración general y secreta
+  - ├── Program.cs # Entrada principal
 
 ---
 

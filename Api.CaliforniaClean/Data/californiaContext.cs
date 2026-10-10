@@ -1,17 +1,17 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Api.CaliforniaEF;
 using Microsoft.EntityFrameworkCore;
 
-namespace Api.DbContext.CaliforniaEF;
+namespace Api.CaliforniaClean.Data;
 
-public partial class californiaContext : Microsoft.EntityFrameworkCore.DbContext
+public partial class CaliforniaContext : Microsoft.EntityFrameworkCore.DbContext
 {
-    public californiaContext()
+    public CaliforniaContext()
     {
     }
 
-    public californiaContext(DbContextOptions<californiaContext> options)
+    public CaliforniaContext(DbContextOptions<CaliforniaContext> options)
         : base(options)
     {
     }
@@ -54,7 +54,7 @@ public partial class californiaContext : Microsoft.EntityFrameworkCore.DbContext
 
     public virtual DbSet<Worker> Workers { get; set; }
 
-    public virtual DbSet<vListProject> vListProjects { get; set; }
+    public virtual DbSet<vListProject> VListProjects { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder )
     {

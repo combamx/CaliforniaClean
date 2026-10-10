@@ -1,6 +1,6 @@
-﻿using Api.CaliforniaClean.Helpers;
+using Api.CaliforniaClean.Helpers;
 using Api.CaliforniaEF;
-using Api.DbContext.CaliforniaEF;
+using Api.CaliforniaClean.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -12,9 +12,9 @@ namespace Api.CaliforniaClean.Controllers
     [Route ( "api/[controller]" )]
     public class VListProjectsController : ControllerBase
     {
-        private readonly californiaContext _context;
+        private readonly CaliforniaContext _context;
 
-        public VListProjectsController ( californiaContext context )
+        public VListProjectsController ( CaliforniaContext context )
         {
             _context = context;
         }
@@ -26,7 +26,7 @@ namespace Api.CaliforniaClean.Controllers
         {
             try
             {
-                var query = _context.vListProjects.AsQueryable ( );
+                var query = _context.VListProjects.AsQueryable ( );
 
                 // Aplicar ordenamiento dinámico
                 query = query.ApplySorting ( pagination.OrderBy , pagination.Desc );
@@ -51,7 +51,7 @@ namespace Api.CaliforniaClean.Controllers
         [HttpGet ( "{id}" )]
         public async Task<ActionResult<vListProject>> GetById ( int id )
         {
-            var item = await _context.vListProjects.FirstOrDefaultAsync ( p => p.ID == id );
+            var item = await _context.VListProjects.FirstOrDefaultAsync ( p => p.ID == id );
             if (item == null)
                 return NotFound ( );
 

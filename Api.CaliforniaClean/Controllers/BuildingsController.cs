@@ -1,8 +1,7 @@
-﻿using Api.CaliforniaClean.Helpers;
+using Api.CaliforniaClean.Helpers;
 using Api.CaliforniaClean.RequestModel;
 using Api.CaliforniaEF;
-using Api.DbContext.CaliforniaEF;
-using AutoMapper;
+using Api.CaliforniaClean.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -14,10 +13,10 @@ namespace Api.CaliforniaClean.Controllers
     [ApiController]
     public class BuildingsController : ControllerBase
     {
-        private readonly californiaContext _context;
+        private readonly CaliforniaContext _context;
         private Exception? exception = null;
 
-        public BuildingsController ( californiaContext context )
+        public BuildingsController ( CaliforniaContext context )
         {
             _context = context;
         }
@@ -40,10 +39,8 @@ namespace Api.CaliforniaClean.Controllers
                 // Paginación
                 var paged = await query.ApplyPagination ( pagination ).ToListAsync ( );
 
-                // Mapeo con AutoMapper
-                var config = new MapperConfiguration ( cfg => cfg.CreateMap<Building , BuildingRequest> ( ) );
-                var mapper = new Mapper ( config );
-                var dto = mapper.Map<List<BuildingRequest>> ( paged );
+                // Conversión a DTO
+                var dto = paged.Select ( item => item.ToRequest ( ) ).ToList ( );
 
                 return dto;
             }
@@ -66,11 +63,7 @@ namespace Api.CaliforniaClean.Controllers
                 {
                     return NotFound ( );
                 }
-
-                var config = new MapperConfiguration ( cfg => cfg.CreateMap<Building , BuildingRequest> ( ) );
-
-                var mapper = new Mapper ( config );
-                BuildingRequest dto = mapper.Map<BuildingRequest> ( building );
+                BuildingRequest dto = building.ToRequest ( );
 
                 return dto;
             }

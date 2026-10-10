@@ -1,6 +1,6 @@
-﻿using Api.CaliforniaClean.Helpers;
+using Api.CaliforniaClean.Helpers;
 using Api.CaliforniaEF;
-using Api.DbContext.CaliforniaEF;
+using Api.CaliforniaClean.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -12,9 +12,9 @@ namespace Api.CaliforniaClean.Controllers
     [ApiController]
     public class SellersController : ControllerBase
     {
-        private readonly californiaContext _context;
+        private readonly CaliforniaContext _context;
         private Exception? exception = null;
-        public SellersController ( californiaContext context )
+        public SellersController ( CaliforniaContext context )
         {
             _context = context;
         }

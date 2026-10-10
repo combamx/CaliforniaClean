@@ -1,8 +1,7 @@
-﻿using Api.CaliforniaClean.Helpers;
+using Api.CaliforniaClean.Helpers;
 using Api.CaliforniaClean.RequestModel;
 using Api.CaliforniaEF;
-using Api.DbContext.CaliforniaEF;
-using AutoMapper;
+using Api.CaliforniaClean.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -14,10 +13,10 @@ namespace Api.CaliforniaClean.Controllers
     [ApiController]
     public class CustomersController : ControllerBase
     {
-        private readonly californiaContext _context;
+        private readonly CaliforniaContext _context;
         private Exception? exception = null;
 
-        public CustomersController ( californiaContext context )
+        public CustomersController ( CaliforniaContext context )
         {
             _context = context;
         }
@@ -40,10 +39,8 @@ namespace Api.CaliforniaClean.Controllers
                 // Paginación
                 var paged = await query.ApplyPagination ( pagination ).ToListAsync ( );
 
-                // Mapear con AutoMapper
-                var config = new MapperConfiguration ( cfg => cfg.CreateMap<Customer , CustomerRequest> ( ) );
-                var mapper = new Mapper ( config );
-                var dto = mapper.Map<List<CustomerRequest>> ( paged );
+                // Conversión a DTO
+                var dto = paged.Select ( item => item.ToRequest ( ) ).ToList ( );
 
                 return dto;
             }
@@ -66,11 +63,7 @@ namespace Api.CaliforniaClean.Controllers
                 {
                     return NotFound ( );
                 }
-
-                var config = new MapperConfiguration ( cfg => cfg.CreateMap<Customer , CustomerRequest> ( ) );
-
-                var mapper = new Mapper ( config );
-                CustomerRequest dto = mapper.Map<CustomerRequest> ( customer );
+                CustomerRequest dto = customer.ToRequest ( );
 
                 return dto;
             }

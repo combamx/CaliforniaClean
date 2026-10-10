@@ -1,8 +1,7 @@
-﻿using Api.CaliforniaClean.Helpers;
+using Api.CaliforniaClean.Helpers;
 using Api.CaliforniaClean.RequestModel;
 using Api.CaliforniaEF;
-using Api.DbContext.CaliforniaEF;
-using AutoMapper;
+using Api.CaliforniaClean.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -14,10 +13,10 @@ namespace Api.CaliforniaClean.Controllers
     [ApiController]
     public class CommentsWOesController : ControllerBase
     {
-        private readonly californiaContext _context;
+        private readonly CaliforniaContext _context;
         private Exception? exception = null;
 
-        public CommentsWOesController ( californiaContext context )
+        public CommentsWOesController ( CaliforniaContext context )
         {
             _context = context;
         }
@@ -41,9 +40,7 @@ namespace Api.CaliforniaClean.Controllers
                 var paged = await query.ApplyPagination ( pagination ).ToListAsync ( );
 
                 // Mapeo a DTO
-                var config = new MapperConfiguration ( cfg => cfg.CreateMap<CommentsWO , CommentsWORequest> ( ) );
-                var mapper = new Mapper ( config );
-                var dto = mapper.Map<List<CommentsWORequest>> ( paged );
+                var dto = paged.Select ( item => item.ToRequest ( ) ).ToList ( );
 
                 return dto;
             }
@@ -66,11 +63,7 @@ namespace Api.CaliforniaClean.Controllers
                 {
                     return NotFound ( );
                 }
-
-                var config = new MapperConfiguration ( cfg => cfg.CreateMap<CommentsWO , CommentsWORequest> ( ) );
-
-                var mapper = new Mapper ( config );
-                CommentsWORequest dto = mapper.Map<CommentsWORequest> ( commentsWO );
+                CommentsWORequest dto = commentsWO.ToRequest ( );
 
                 return dto;
 

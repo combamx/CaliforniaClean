@@ -1,5 +1,5 @@
-﻿using Api.CaliforniaClean.Middleware;
-using Api.DbContext.CaliforniaEF;
+using Api.CaliforniaClean.Middleware;
+using Api.CaliforniaClean.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -13,7 +13,7 @@ var builder = WebApplication.CreateBuilder ( args );
 
 // 🛠 Configuración de la cadena de conexión
 var connectionString = builder.Configuration.GetConnectionString ( "california_db" );
-builder.Services.AddDbContext<californiaContext> ( options =>
+builder.Services.AddDbContext<CaliforniaContext> ( options =>
     options.UseSqlServer ( connectionString ) );
 
 // ⚙️ Configuración de controladores y JSON
@@ -26,7 +26,12 @@ builder.Services.AddControllers ( )
 
 // 🔐 Configuración de autenticación JWT
 var jwtSettings = builder.Configuration.GetSection ( "Jwt" );
-var key = Encoding.UTF8.GetBytes ( jwtSettings [ "Key" ] );
+var jwtKey = jwtSettings [ "Key" ];
+if (string.IsNullOrWhiteSpace ( jwtKey ))
+{
+    throw new InvalidOperationException ( "La configuración Jwt:Key es obligatoria." );
+}
+var key = Encoding.UTF8.GetBytes ( jwtKey );
 
 builder.Services.AddAuthentication ( options =>
 {
@@ -45,6 +50,24 @@ builder.Services.AddAuthentication ( options =>
         ValidAudience = jwtSettings [ "Audience" ] ,
         IssuerSigningKey = new SymmetricSecurityKey ( key )
     };
+} );
+
+// 🌐 Configuración de CORS para el Frontend
+builder.Services.AddCors ( options =>
+{
+    options.AddPolicy ( "LocalFrontend" , policy =>
+    {
+        policy.WithOrigins ( 
+            "http://localhost:3000", 
+            "http://127.0.0.1:3000",
+            "http://localhost:5173",
+            "http://127.0.0.1:5173"
+        )
+        .AllowAnyHeader ( )
+        .AllowAnyMethod ( )
+        .AllowCredentials ( )
+        .WithExposedHeaders ( "X-Total-Count" );
+    } );
 } );
 
 // 📦 Configuración de Swagger con soporte JWT
@@ -87,11 +110,15 @@ if (app.Environment.IsDevelopment ( ))
     app.UseSwaggerUI ( );
 }
 
+app.UseHttpsRedirection ( );
+app.UseRouting ( );
+
+app.UseCors ( "LocalFrontend" );
+
 // 🛡️ Middlewares personalizados
 app.UseRequestMonitor ( );      // Monitorea IP y user-agent y envía alertas por correo
 app.UseSecurityHeaders ( );     // Agrega cabeceras de seguridad HTTP
 
-app.UseHttpsRedirection ( );
 app.UseAuthentication ( );
 app.UseAuthorization ( );
 app.MapControllers ( );

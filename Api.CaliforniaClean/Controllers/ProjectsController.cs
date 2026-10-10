@@ -1,10 +1,9 @@
-﻿
+
 using Api.CaliforniaClean.Helpers;
 using Api.CaliforniaClean.RequestModel;
 using Api.CaliforniaClean.RequestModel.Views;
 using Api.CaliforniaEF;
-using Api.DbContext.CaliforniaEF;
-using AutoMapper;
+using Api.CaliforniaClean.Data;
 using Dapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -18,11 +17,11 @@ namespace Api.CaliforniaClean.Controllers
     [ApiController]
     public class ProjectsController : ControllerBase
     {
-        private readonly californiaContext _context;
+        private readonly CaliforniaContext _context;
         private Exception? exception = null;
         private string? ConnectionString = "";
 
-        public ProjectsController ( californiaContext context )
+        public ProjectsController ( CaliforniaContext context )
         {
             _context = context;
             ConnectionString = _context.Database.GetConnectionString ( );
@@ -46,9 +45,7 @@ namespace Api.CaliforniaClean.Controllers
                 var paged = await query.ApplyPagination ( pagination ).ToListAsync ( );
 
                 // Mapeo
-                var config = new MapperConfiguration ( cfg => cfg.CreateMap<Project , ProjectRequest> ( ) );
-                var mapper = new Mapper ( config );
-                var dto = mapper.Map<List<ProjectRequest>> ( paged );
+                var dto = paged.Select ( item => item.ToRequest ( ) ).ToList ( );
 
                 return dto;
             }
@@ -71,11 +68,7 @@ namespace Api.CaliforniaClean.Controllers
                     return NotFound ( );
                 }
 
-                var projects = await _context.Projects.ToListAsync ( );
-                var config = new MapperConfiguration ( cfg => cfg.CreateMap<Project , ProjectRequest> ( ) );
-
-                var mapper = new Mapper ( config );
-                ProjectRequest dto = mapper.Map<ProjectRequest> ( projects );
+                ProjectRequest dto = project.ToRequest ( );
 
                 return dto;
             }

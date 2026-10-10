@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <TypeScriptNoImplicitAny>True</TypeScriptNoImplicitAny>
@@ -9,14 +9,14 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>6acd9621-1e30-4a7b-85ed-ab90ce834101</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="AspNetCoreRateLimit" Version="5.0.0" />
-    <PackageReference Include="AutoMapper" Version="14.0.0" />
     <PackageReference Include="Azure.Security.KeyVault.Secrets" Version="4.7.0" />
     <PackageReference Include="Dapper" Version="2.1.66" />
     <PackageReference Include="EntityFramework" Version="6.5.1" />

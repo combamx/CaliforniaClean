@@ -5,8 +5,6 @@ API RESTful desarrollada con **ASP.NET Core Web API** para la gestión de proyec
 ---
 
 ## 📁 Estructura del proyecto
-ChatGPT dijo:
-Por supuesto, Omar. Aquí tienes un README.md profesional para tu proyecto CaliforniaClean API en C# (.NET Core):
 
 ✅ README.md — Versión C# (.NET Core)
 markdown
